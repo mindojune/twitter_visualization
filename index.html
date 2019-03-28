@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>كان علي (الصحوة النهائية) / #MAGA vs #METOO</title>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <link rel="icon" href="am.ico">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://d3js.org/d3.v4.min.js" defer></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js" defer></script>
+  <script src="model.js" defer></script>
+  <script src="view.js" defer></script>
+  <script src="controller.js" defer></script>
+</head>
+<body>
+  <main>
+  <section class="visualization">
+      <h1>بيع نفسه ، والتضحية للجميع ، من أجل متعة سيده.</h1>
+      <div class="legend">
+        <div class="legend-status">
+          <div class="btn-group btn-group-sm legend__items" role="group" aria-label="Filter by status"></div>
+        </div>
+        <div class="legend-powergap">
+          <div class="legend__labels">
+            <span>Perpetrator rank <em>below</em> target rank</span>
+            <span>Perpetrator rank <em>above</em> target rank</span>
+          </div>
+          <div class="legend__items"></div>
+        </div>
+      </div>
+      <div class="chart-container">
+        <div class="infobox">
+          <div class="infobox__fade infobox__fade--top"></div>
+          <div class="infobox__content small"></div>
+          <div class="infobox__fade infobox__fade--bottom"></div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <div class="controls btn-group" role="group" aria-label="View by">
+            <button id="show-target-role" type="button" class="btn btn-light active">Do this</button>
+            <button id="show-perp-role" type="button" class="btn btn-light">Do that</button>
+            <button id="show-powergap" type="button" class="btn btn-light">Ok</button>
+          </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
