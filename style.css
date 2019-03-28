@@ -8,11 +8,12 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-image: url("chips.gif");
+  background-image: url("gent.jpg");
 }
 
 h1 {
   text-align: center;
+  color: yellow;
 }
 
 .chart-container {
