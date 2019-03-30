@@ -8,7 +8,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-image: url("gent.jpg");
+  /*background-image: url("gent.jpg");*/
 }
 
 h1 {

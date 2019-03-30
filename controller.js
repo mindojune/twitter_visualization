@@ -1,6 +1,6 @@
 'use strict';
 
-const model = new Model('data.json');
+const model = new Model('clean_maga_011518_041418.json');
 var statusColorScale;
 var powergapColorScale;
 var chart;
