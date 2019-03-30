@@ -26,14 +26,14 @@ var zoom = d3.zoom()
     .extent([[0, 0], [width, height]])
     .on("zoom", zoomed);
 
-var area = d3.line()//area()
+var line = d3.line()//area()
     //.curve(d3.curveMonotoneX)
     .x(function(d) { return x(d.date); })
     .y(function(d) { return y(d.price); });
     //.y0(height)
     //.y1(function(d) { return y(d.price); });
 
-var area2 = d3.line()//area()
+var line2 = d3.line()//area()
     //.curve(d3.curveMonotoneX)
     .x(function(d) { return x2(d.date); })
     .y(function(d) { return y2(d.price); });
@@ -42,9 +42,11 @@ var area2 = d3.line()//area()
 
 svg.append("defs").append("clipPath")
     .attr("id", "clip")
-  .append("rect")
+    .append("rect")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("x", 0)
+    .attr("y", 0);
 
 var focus = svg.append("g")
     .attr("class", "focus")
@@ -70,7 +72,8 @@ d3.csv("ex_time.csv", type, function(error, data) {
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
-      .attr("d", area);
+      .attr("clip-path", "url(#clip)")
+      .attr("d", line);
 
   focus.append("g")
       .attr("class", "axis axis--x")
@@ -87,7 +90,7 @@ d3.csv("ex_time.csv", type, function(error, data) {
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
-      .attr("d", area2);
+      .attr("d", line2);
 
   context.append("g")
       .attr("class", "axis axis--x")
@@ -111,7 +114,7 @@ function brushed() {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
   var s = d3.event.selection || x2.range();
   x.domain(s.map(x2.invert, x2));
-  focus.select(".line").attr("d", area);
+  focus.select(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
   svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
       .scale(width / (s[1] - s[0]))
@@ -122,7 +125,7 @@ function zoomed() {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
   var t = d3.event.transform;
   x.domain(t.rescaleX(x2).domain());
-  focus.select(".line").attr("d", area);
+  focus.select(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
   context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
 }
