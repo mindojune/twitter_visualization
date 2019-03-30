@@ -13,16 +13,21 @@
   <link rel="stylesheet" href="style.css">
 
   <script src="https://d3js.org/d3.v4.min.js" defer></script>
-  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js" defer></script>
-  <script src="model.js" defer></script>
-  <script src="view.js" defer></script>
-  <script src="controller.js" defer></script>
+  <!-- <script src="https://d3js.org/d3-scale-chromatic.v1.min.js" defer></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+  <script src="time.js" defer></script>
+  <!-- <script src="model.js" defer></script> -->
+  <!--<script src="view.js" defer></script> -->
+  <!-- <script src="controller.js" defer></script> -->
 </head>
 <body>
   <main>
   <section class="visualization">
       <h1>#METOO vs #MAGA: A Twitter Visualization</h1>
-      <div class="legend">
+      <div text-align="center">
+        <svg id= "time_series1" width="960" height="500"></svg>
+      </div>
+<!--       <div class="legend">
         <div class="legend-status">
           <div class="btn-group btn-group-sm legend__items" role="group" aria-label="Filter by status"></div>
         </div>
@@ -47,7 +52,7 @@
             <button id="show-perp-role" type="button" class="btn btn-light">Do that</button>
             <button id="show-powergap" type="button" class="btn btn-light">Ok</button>
           </div>
-      </div>
+      </div> -->
     </section>
   </main>
 </body>

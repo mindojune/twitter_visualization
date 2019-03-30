@@ -8,99 +8,38 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  text-align: center;
   /*background-image: url("gent.jpg");*/
 }
 
 h1 {
   text-align: center;
-  color: yellow;
+  color: black;
 }
 
-.chart-container {
-  width: 1000px;
-  margin: 0 auto;
-  position: relative;
-}
 
-.infobox {
-  position: absolute;
-  top: 25%;
-  right: 3%;
-  height: 63%;
-  width: 67%;
-  opacity: 0;
-}
 
-.infobox__content {
-  overflow-y: scroll;
-  height: 100%;
-  padding-top: 20px;
-}
-
-.infobox__fade {
-  position: absolute;
-  background: black;
-  height: 10%;
-  width: 100%;
-}
-
-.infobox__fade--top {
-  top: 0;
-  background: linear-gradient(rgba(255,255,255,1), rgba(255,255,255,0));
-}
-
-.infobox__fade--bottom {
-  bottom: 0;
-  background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
-  height: 10%;
-}
-
-.legend {
-  width: 85%;
-  height: 60px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-}
-
-.btn-group-sm > .btn {
-  font-size: .7rem;
-}
-
-.legend-powergap {
-  /* Initial state */
-  display: none;
-  opacity: 0;
-  flex: 1;
-  font-size: .7rem;
-}
-
-.legend-powergap .legend__labels {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 5px;
-}
-
-.legend-powergap .legend__items {
-  display: flex;
-}
-
-.legend-powergap .legend__items span {
-  flex: 1;
-  text-shadow:
-		-0.5px -0.5px 0 #fff,
-		0.5px -0.5px 0 #fff,
-		-0.5px 0.5px 0 #fff,
-    0.5px 0.5px 0 #fff;
+.time_series1 {
   text-align: center;
-  padding: 2px;
-  font-size: .7rem; 
+  color: black;
+  position:absolute;
+  margin: 0 auto;
+  display: inline-block;
+
 }
 
-.bar:hover {
-  cursor: pointer;
+
+
+/******************************************
+* Time
+********************************************/
+.area {
+  fill: steelblue;
+  clip-path: url(#clip);
 }
 
-.disabled {
-  pointer-events: none;
+.zoom {
+  cursor: move;
+  fill: none;
+  pointer-events: all;
 }
