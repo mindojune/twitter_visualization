@@ -1,3 +1,5 @@
+'use strict';
+
 var svg = d3.select("svg"),
     // margin  = {top: 20, bottom: 110, right: 20,  left: 40},
     // margin2 = {top: 430, bottom: 30, right: 20,  left: 40},
@@ -5,14 +7,14 @@ var svg = d3.select("svg"),
     // height = +svg.attr("height") - margin.top - margin.bottom,
     // height2 = +svg.attr("height") - margin2.top - margin2.bottom;
 
-    margin  = {top: 20, bottom: 110, right: 20,  left: 40},
-    margin2 = {top: 430, bottom: 30, right: 20,  left: 40},
+    margin  = {top: 20, bottom: 110, right: 20,  left: 50},
+    margin2 = {top: 430, bottom: 30, right: 20,  left: 50},
     width = +svg.attr("width") - margin.left - margin.right,      // 900
     height = +svg.attr("height") - margin.top - margin.bottom,    // 370
     height2 = +svg.attr("height") - margin2.top - margin2.bottom ; // 40
 
 
-var parseDate = d3.timeParse("%b %Y");
+var parseDate = d3.timeParse("%Y-%m-%d");
 
 var x = d3.scaleTime().range([0, width]),
     y = d3.scaleLinear().range([height, 0]),
@@ -36,14 +38,14 @@ var zoom = d3.zoom()
 var line = d3.line()//area()
     //.curve(d3.curveMonotoneX)
     .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.price); });
+    .y(function(d) { return y(d.value); });
     //.y0(height)
     //.y1(function(d) { return y(d.price); });
 
 var line2 = d3.line()//area()
     //.curve(d3.curveMonotoneX)
     .x(function(d) { return x2(d.date); })
-    .y(function(d) { return y2(d.price); });
+    .y(function(d) { return y2(d.value); });
     //.y0(height2)
     //.y1(function(d) { return y2(d.price); });
 
@@ -85,128 +87,126 @@ function zoomed() {
   //context.select(".brush").call(brush.move, [x(60), x(120)]);
 }
 
-function type(d) {
-  d.date = parseDate(d.date);
-  d.price = +d.price;
-  return d;
-}
 
 
 // data loading and drawing
-d3.csv("ex_time.csv", type, function(error, data) {
-  if (error) throw error;
+const model = new Model('data/clean_maga_011518_041418.json');
+model.loadData()
+  .then((data) => {
+    model.data = data;
+
+    var tweetsByDate = model.getTweetsByDate();
+    //console.log(JSON.stringify(tweetsByDate));
+    var likesByDate = model.getLikesByDate();
+
+    var curr_data = likesByDate;
+    console.log(JSON.stringify(curr_data));
+
 
   // set domains
-  x.domain(d3.extent(data, function(d) { return d.date; }));
-  y.domain([0, d3.max(data, function(d) { return d.price; })]);
+  x.domain(d3.extent(curr_data, function(d) { return d.date; }));
+  y.domain([0, d3.max(curr_data, function(d) { return d.value; })]);
   x2.domain(x.domain());
   y2.domain(y.domain());
 
-  //draw upper line1
-  focus.append("path")
-      .datum(data)
-      .attr("class", "line")
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
-      //.attr("clip-path", "url(#clip)") // no need (done in css)
-      .attr("d", line);
+    //draw upper line1
+    focus.append("path")
+        .datum(curr_data)
+        .attr("class", "line")
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1.5)
+        //.attr("clip-path", "url(#clip)") // no need (done in css)
+        .attr("d", line);
 
-  focus.append("g")
-      .attr("class", "axis axis--x")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+    focus.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
 
-  focus.append("g")
-      .attr("class", "axis axis--y")
-      .call(yAxis);
+    focus.append("g")
+        .attr("class", "axis axis--y")
+        .call(yAxis);
 
-  context.append("path")
-      .datum(data)
-      .attr("class", "line")
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
-      .attr("d", line2);
+    context.append("path")
+        .datum(curr_data)
+        .attr("class", "line")
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1.5)
+        .attr("d", line2);
 
-  context.append("g")
-      .attr("class", "axis axis--x")
-      .attr("transform", "translate(0," + height2 + ")")
-      .call(xAxis2);
+    context.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height2 + ")")
+        .call(xAxis2);
 
-  context.append("g")
-      .attr("class", "brush")
-      .call(brush)
-      .call(brush.move, x.range());
+    context.append("g")
+        .attr("class", "brush")
+        .call(brush)
+        .call(brush.move, x.range());
 
-  svg.append("rect")
-      .attr("class", "zoom")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-      .call(zoom);
+    svg.append("rect")
+        .attr("class", "zoom")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .call(zoom);
+
 });
 
+// d3.csv("ex_time.csv", type, function(error, data) {
+//   if (error) throw error;
 
-// data loading and drawing
-d3.json("clean_maga_011518_041418.json", type, function(error, data) {
-  if (error) throw error;
+//   // set domains
+//   x.domain(d3.extent(data, function(d) { return d.date; }));
+//   y.domain([0, d3.max(data, function(d) { return d.price; })]);
+//   x2.domain(x.domain());
+//   y2.domain(y.domain());
 
-  // tweet_dic['id'] = i_d
-  // tweet_dic['tweeter'] = tweeter
-  // tweet_dic['content'] = content
-  // tweet_dic['replies'] = replies
-  // tweet_dic['retweets'] = retweets
-  // tweet_dic['likes'] = likes
-  // tweet_dic['date'] = d1
+//   //draw upper line1
+//   focus.append("path")
+//       .datum(data)
+//       .attr("class", "line")
+//       .attr("fill", "none")
+//       .attr("stroke", "steelblue")
+//       .attr("stroke-width", 1.5)
+//       //.attr("clip-path", "url(#clip)") // no need (done in css)
+//       .attr("d", line);
 
-  // set domains
-  x.domain(d3.extent(data, function(d) { return d.date; }));
-  y.domain([0, d3.max(data, function(d) { return d.price; })]);
-  x2.domain(x.domain());
-  y2.domain(y.domain());
+//   focus.append("g")
+//       .attr("class", "axis axis--x")
+//       .attr("transform", "translate(0," + height + ")")
+//       .call(xAxis);
 
-  //draw upper line1
-  focus.append("path")
-      .datum(data)
-      .attr("class", "line")
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
-      //.attr("clip-path", "url(#clip)") // no need (done in css)
-      .attr("d", line);
+//   focus.append("g")
+//       .attr("class", "axis axis--y")
+//       .call(yAxis);
 
-  focus.append("g")
-      .attr("class", "axis axis--x")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+//   context.append("path")
+//       .datum(data)
+//       .attr("class", "line")
+//       .attr("fill", "none")
+//       .attr("stroke", "steelblue")
+//       .attr("stroke-width", 1.5)
+//       .attr("d", line2);
 
-  focus.append("g")
-      .attr("class", "axis axis--y")
-      .call(yAxis);
+//   context.append("g")
+//       .attr("class", "axis axis--x")
+//       .attr("transform", "translate(0," + height2 + ")")
+//       .call(xAxis2);
 
-  context.append("path")
-      .datum(data)
-      .attr("class", "line")
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
-      .attr("d", line2);
+//   context.append("g")
+//       .attr("class", "brush")
+//       .call(brush)
+//       .call(brush.move, x.range());
 
-  context.append("g")
-      .attr("class", "axis axis--x")
-      .attr("transform", "translate(0," + height2 + ")")
-      .call(xAxis2);
+//   svg.append("rect")
+//       .attr("class", "zoom")
+//       .attr("width", width)
+//       .attr("height", height)
+//       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+//       .call(zoom);
+// });
 
-  context.append("g")
-      .attr("class", "brush")
-      .call(brush)
-      .call(brush.move, x.range());
 
-  svg.append("rect")
-      .attr("class", "zoom")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-      .call(zoom);
-});
