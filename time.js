@@ -100,7 +100,6 @@ model.loadData()
     var likesByDate = model.getLikesByDate();
 
     var curr_data = likesByDate;
-    console.log(JSON.stringify(curr_data));
 
 
   // set domains
@@ -154,6 +153,21 @@ model.loadData()
         .call(zoom);
 
 });
+
+d3.select('.controls').on('click', function() {
+  d3.select(this).selectAll('button').classed('active', false);
+  d3.select(d3.event.target).classed('active', true)
+});
+d3.select('#show-replies').on('click', showTargetStatus);
+d3.select('#show-retweets').on('click', showTargetStatus);
+d3.select('#show-likes').on('click', showTargetStatus);
+d3.select('#show-ratio').on('click', showTargetStatus);
+
+
+
+function showTargetStatus() {
+  return;
+}
 
 // d3.csv("ex_time.csv", type, function(error, data) {
 //   if (error) throw error;
