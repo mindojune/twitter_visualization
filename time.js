@@ -9,10 +9,11 @@ var svg = d3.select("svg"),
 
     margin  = {top: 20, bottom: 110, right: 20,  left: 50},
     margin2 = {top: 430, bottom: 30, right: 20,  left: 50},
+    margin3 = {top: 430, bottom: 30, right: 20,  left: 50},
     width = +svg.attr("width") - margin.left - margin.right,      // 900
-    height = +svg.attr("height") - margin.top - margin.bottom,    // 370
-    height2 = +svg.attr("height") - margin2.top - margin2.bottom ; // 40
-
+    height = +svg.attr("height")/(2) - margin.top - margin.bottom,    // 370
+    height2 = +svg.attr("height")/(2) - margin2.top - margin2.bottom, // 40
+    height3 = +svg.attr("height") - margin3.top - margin3.bottom ; // 40
 
 var parseDate = d3.timeParse("%Y-%m-%d");
 
@@ -102,11 +103,12 @@ model.loadData()
     var curr_data = likesByDate;
 
 
-  // set domains
-  x.domain(d3.extent(curr_data, function(d) { return d.date; }));
-  y.domain([0, d3.max(curr_data, function(d) { return d.value; })]);
-  x2.domain(x.domain());
-  y2.domain(y.domain());
+    // set domains
+    x.domain(d3.extent(curr_data, function(d) { return d.date; }));
+    y.domain([0, d3.max(curr_data, function(d) { return d.value; })]);
+    x2.domain(x.domain());
+    y2.domain(y.domain());
+
 
     //draw upper line1
     focus.append("path")
@@ -158,14 +160,26 @@ d3.select('.controls').on('click', function() {
   d3.select(this).selectAll('button').classed('active', false);
   d3.select(d3.event.target).classed('active', true)
 });
-d3.select('#show-replies').on('click', showTargetStatus);
-d3.select('#show-retweets').on('click', showTargetStatus);
-d3.select('#show-likes').on('click', showTargetStatus);
-d3.select('#show-ratio').on('click', showTargetStatus);
+d3.select('#show-replies').on('click', showReplies);
+d3.select('#show-retweets').on('click', showRetweets);
+d3.select('#show-likes').on('click', showLikes);
+d3.select('#show-ratio').on('click', showRatio);
 
 
 
-function showTargetStatus() {
+function showReplies() {
+  return;
+}
+
+function showRetweets() {
+  return;
+}
+
+function showLikes() {
+  return;
+}
+
+function showLikes() {
   return;
 }
 
