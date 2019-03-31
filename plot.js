@@ -231,7 +231,7 @@ d3.select('.controls').on('click', function() {
 d3.select('#show-replies').on('click', showReplies);
 d3.select('#show-retweets').on('click', showRetweets);
 d3.select('#show-likes').on('click', showLikes);
-d3.select('#show-ratio').on('click', showAverageRatio);
+d3.select('#show-ratio').on('click', showAggregateRatio);
 d3.select('#show-total').on('click', showTotal);
 
 function showReplies() {
@@ -255,6 +255,13 @@ function showLikes() {
 
 function showAverageRatio() {
   time_plot.curr_data = model.getAverageRatioByDate();
+  time_plot.draw();
+  return;
+}
+
+
+function showAggregateRatio() {
+  time_plot.curr_data = model.getAggregateRatioByDate();
   time_plot.draw();
   return;
 }

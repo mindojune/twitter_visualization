@@ -99,6 +99,26 @@ class Model {
   }
 
 
+  // Ratio is calculated as Average of Individual Tweet Ratio (Replies : Likes + Retweets)
+  getAggregateRatioByDate(){
+    var aggregateratioByDate = d3.nest()
+      .key(function(d) { return d.date; })
+      .rollup(function(v) 
+            { 
+              return d3.sum(v, function(d) { return d.replies})/
+                (d3.sum(v, function(d) { return d.likes})
+                +d3.sum(v, function(d) { return d.retweets})); 
+            })
+      .entries(this.data);
+
+    aggregateratioByDate.forEach(function(d) {
+     d.date = parseDate(d.key);
+     d.value = d.value;
+    });
+
+    return aggregateratioByDate;    
+  }
+
   getTotalByDate(){
     var totalByDate = d3.nest()
       .key(function(d) { return d.date; })
