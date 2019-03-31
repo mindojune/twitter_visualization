@@ -48,6 +48,37 @@ class Model {
 
     return likesByDate;    
   }
+
+  getRetweetsByDate(){
+    var retweetsByDate = d3.nest()
+      .key(function(d) { return d.date; })
+      .rollup(function(v) { return d3.sum(v, function(d) { return d.retweets; }); })
+      .entries(this.data);
+
+    retweetsByDate.forEach(function(d) {
+     d.date = parseDate(d.key);
+     d.value = d.value;
+    });
+
+    return retweetsByDate;    
+  }
+
+
+  getRepliesByDate(){
+    var repliesByDate = d3.nest()
+      .key(function(d) { return d.date; })
+      .rollup(function(v) { return d3.sum(v, function(d) { return d.replies; }); })
+      .entries(this.data);
+
+    repliesByDate.forEach(function(d) {
+     d.date = parseDate(d.key);
+     d.value = d.value;
+    });
+
+    return repliesByDate;    
+  }
+
+
   // tweet_dic['id'] = i_d
   // tweet_dic['tweeter'] = tweeter
   // tweet_dic['content'] = content

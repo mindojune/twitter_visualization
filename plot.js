@@ -90,6 +90,7 @@ class Plot {
 
   drawLine1(){
     var $this = this;
+
     this.line1 = d3.line()
         .x(function(d) { return $this.x1(d.date); })
         .y(function(d) { return $this.y1(d.value); });
@@ -222,16 +223,21 @@ d3.select('#show-likes').on('click', showLikes);
 d3.select('#show-ratio').on('click', showRatio);
 
 
-
 function showReplies() {
+  time_plot.curr_data = model.getRepliesByDate();
+  time_plot.draw()
   return;
 }
 
 function showRetweets() {
+  time_plot.curr_data = model.getRetweetsByDate();
+  time_plot.draw()
   return;
 }
 
 function showLikes() {
+  time_plot.curr_data = model.getLikesByDate();
+  time_plot.draw()
   return;
 }
 
