@@ -78,6 +78,40 @@ class Model {
     return repliesByDate;    
   }
 
+  // Ratio is calculated as Average of Individual Tweet Ratio (Replies : Likes + Retweets)
+  getAverageRatioByDate(){
+    var averageratioByDate = d3.nest()
+      .key(function(d) { return d.date; })
+      .rollup(function(v) { return d3.mean(v, function(d) 
+          { if ( (d.likes+d.retweets) == 0 ) return 0;
+            else return d.replies/(d.likes+d.retweets); 
+          }); 
+
+                          })
+      .entries(this.data);
+
+    averageratioByDate.forEach(function(d) {
+     d.date = parseDate(d.key);
+     d.value = d.value;
+    });
+
+    return averageratioByDate;    
+  }
+
+
+  getTotalByDate(){
+    var totalByDate = d3.nest()
+      .key(function(d) { return d.date; })
+      .rollup(function(v) { return d3.sum(v, function(d) { return d.replies + d.retweets + d.likes; }); })
+      .entries(this.data);
+
+    totalByDate.forEach(function(d) {
+     d.date = parseDate(d.key);
+     d.value = d.value;
+    });
+
+    return totalByDate;    
+  }
 
   // tweet_dic['id'] = i_d
   // tweet_dic['tweeter'] = tweeter

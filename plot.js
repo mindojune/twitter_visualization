@@ -1,13 +1,11 @@
 'use strict';
 
+// TODO 1: Enter - Exit for redrawing
+// TODO 2: Idea for Bottom Aggregate Visualization
+
 class Plot {
   constructor(curr_data) {
-      this.svg = d3.select("svg"),
-      // margin  = {top: 20, bottom: 110, right: 20,  left: 40},
-      // margin2 = {top: 430, bottom: 30, right: 20,  left: 40},
-      // width = +svg.attr("width") - margin.left - margin.right,
-      // height = +svg.attr("height") - margin.top - margin.bottom,
-      // height2 = +svg.attr("height") - margin2.top - margin2.bottom;
+      this.svg = d3.selectAll("svg");
 
       this.margin  = {top: 20, bottom: 110, right: 20,  left: 50};
       this.margin2 = {top: 430, bottom: 30, right: 20,  left: 50};
@@ -22,14 +20,13 @@ class Plot {
   } 
 
   draw() {
-
     this.createXScaleAxis();
     this.createYScaleAxis();    
     this.createBrush();
     this.createZoom();
-    this.createFocus();
-    this.createContext();
 
+    this.drawFocus();
+    this.drawContext();
     this.drawLine1();
     this.drawLine2();
     this.drawAxisX();
@@ -60,17 +57,6 @@ class Plot {
   }
 
 
-  createFocus(){
-    this.focus = this.svg.append("g")
-        .attr("class", "focus")
-        .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-  }
-
-  createContext(){
-    this.context = this.svg.append("g")
-        .attr("class", "context")
-        .attr("transform", "translate(" + this.margin2.left + "," + this.margin2.top + ")");
-  }
 
   createBrush(){
       this.brush = d3.brushX(this)
@@ -88,12 +74,37 @@ class Plot {
 
   }
 
+  drawFocus(){
+
+    this.focus = this.svg.selectAll('.focus');
+
+    this.focus.remove();
+
+
+    this.focus = this.svg.append("g")
+        .attr("class", "focus")
+        .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+
+  }
+
+  drawContext(){
+    this.context = this.svg.selectAll('.context');
+
+    this.context.remove();
+
+    this.context = this.svg.append("g")
+        .attr("class", "context")
+        .attr("transform", "translate(" + this.margin2.left + "," + this.margin2.top + ")");
+  }
+
+
   drawLine1(){
     var $this = this;
 
     this.line1 = d3.line()
         .x(function(d) { return $this.x1(d.date); })
         .y(function(d) { return $this.y1(d.value); });
+
     //draw upper line1
     this.focus.append("path")
         .datum(this.curr_data)
@@ -204,7 +215,7 @@ model.loadData()
 
     var tweetsByDate = model.getTweetsByDate();
     //console.log(JSON.stringify(tweetsByDate));
-    var likesByDate = model.getLikesByDate();
+    var likesByDate = model.getRepliesByDate();
 
     var curr_data = likesByDate;
 
@@ -220,83 +231,39 @@ d3.select('.controls').on('click', function() {
 d3.select('#show-replies').on('click', showReplies);
 d3.select('#show-retweets').on('click', showRetweets);
 d3.select('#show-likes').on('click', showLikes);
-d3.select('#show-ratio').on('click', showRatio);
-
+d3.select('#show-ratio').on('click', showAverageRatio);
+d3.select('#show-total').on('click', showTotal);
 
 function showReplies() {
   time_plot.curr_data = model.getRepliesByDate();
-  time_plot.draw()
+  time_plot.draw();
+
   return;
 }
 
 function showRetweets() {
   time_plot.curr_data = model.getRetweetsByDate();
-  time_plot.draw()
+  time_plot.draw();
   return;
 }
 
 function showLikes() {
   time_plot.curr_data = model.getLikesByDate();
-  time_plot.draw()
+  time_plot.draw();
   return;
 }
 
-function showRatio() {
+function showAverageRatio() {
+  time_plot.curr_data = model.getAverageRatioByDate();
+  time_plot.draw();
   return;
 }
 
-// d3.csv("ex_time.csv", type, function(error, data) {
-//   if (error) throw error;
+function showTotal() {
+  time_plot.curr_data = model.getTotalByDate();
+  time_plot.draw();
+  return;
+}
 
-//   // set domains
-//   x.domain(d3.extent(data, function(d) { return d.date; }));
-//   y.domain([0, d3.max(data, function(d) { return d.price; })]);
-//   x2.domain(x.domain());
-//   y2.domain(y.domain());
-
-//   //draw upper line1
-//   focus.append("path")
-//       .datum(data)
-//       .attr("class", "line")
-//       .attr("fill", "none")
-//       .attr("stroke", "steelblue")
-//       .attr("stroke-width", 1.5)
-//       //.attr("clip-path", "url(#clip)") // no need (done in css)
-//       .attr("d", line);
-
-//   focus.append("g")
-//       .attr("class", "axis axis--x")
-//       .attr("transform", "translate(0," + height + ")")
-//       .call(xAxis);
-
-//   focus.append("g")
-//       .attr("class", "axis axis--y")
-//       .call(yAxis);
-
-//   context.append("path")
-//       .datum(data)
-//       .attr("class", "line")
-//       .attr("fill", "none")
-//       .attr("stroke", "steelblue")
-//       .attr("stroke-width", 1.5)
-//       .attr("d", line2);
-
-//   context.append("g")
-//       .attr("class", "axis axis--x")
-//       .attr("transform", "translate(0," + height2 + ")")
-//       .call(xAxis2);
-
-//   context.append("g")
-//       .attr("class", "brush")
-//       .call(brush)
-//       .call(brush.move, x.range());
-
-//   svg.append("rect")
-//       .attr("class", "zoom")
-//       .attr("width", width)
-//       .attr("height", height)
-//       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-//       .call(zoom);
-// });
 
 
