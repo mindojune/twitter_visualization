@@ -7,9 +7,9 @@ class Plot {
   constructor(curr_data) {
       this.svg = d3.selectAll("svg");
 
-      this.margin  = {top: 20, bottom: 110, right: 20,  left: 50};
-      this.margin2 = {top: 430, bottom: 30, right: 20,  left: 50};
-      this.margin3 = {top: 430, bottom: 30, right: 20,  left: 50};
+      this.margin  = {top: 20, bottom: 110, right: 20,  left: 80};
+      this.margin2 = {top: 430, bottom: 30, right: 20,  left: 80};
+      this.margin3 = {top: 430, bottom: 30, right: 20,  left: 80};
       this.width = +this.svg.attr("width") - this.margin.left - this.margin.right;      // 900
       this.height = +this.svg.attr("height")/(2) - this.margin.top - this.margin.bottom;    // 370
       this.height2 = +this.svg.attr("height")/(2) - this.margin2.top - this.margin2.bottom; // 40
