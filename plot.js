@@ -1,6 +1,6 @@
 'use strict';
 
-// TODO 1: Enter - Exit for redrawing
+// TODO 1: http://bl.ocks.org/d3noob/7030f35b72de721622b8 make it work
 // TODO 2: Idea for Bottom Aggregate Visualization
 
 class Plot {
@@ -38,10 +38,12 @@ class Plot {
 
   }
 
+
+
   createXScaleAxis() {
       this.x1 = d3.scaleTime().range([0, this.width]);
       this.x2 = d3.scaleTime().range([0, this.width]);
-      this.xAxis = d3.axisBottom(this.x1);
+      this.xAxis1 = d3.axisBottom(this.x1);
       this.xAxis2 = d3.axisBottom(this.x2);
       this.x1.domain(d3.extent(this.curr_data, function(d) { return d.date; }));  
       this.x2.domain(this.x1.domain());
@@ -76,25 +78,29 @@ class Plot {
 
   drawFocus(){
 
+
     this.focus = this.svg.selectAll('.focus');
 
-    this.focus.remove();
-
+    //this.focus.remove(); //
 
     this.focus = this.svg.append("g")
         .attr("class", "focus")
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+  
 
   }
 
   drawContext(){
     this.context = this.svg.selectAll('.context');
 
-    this.context.remove();
+    //this.context.remove();
 
     this.context = this.svg.append("g")
         .attr("class", "context")
         .attr("transform", "translate(" + this.margin2.left + "," + this.margin2.top + ")");
+
+
+
   }
 
 
@@ -104,6 +110,7 @@ class Plot {
     this.line1 = d3.line()
         .x(function(d) { return $this.x1(d.date); })
         .y(function(d) { return $this.y1(d.value); });
+
 
     //draw upper line1
     this.focus.append("path")
@@ -135,12 +142,12 @@ class Plot {
 
   drawAxisX(){
     this.focus.append("g")
-        .attr("class", "axis axis--x")
+        .attr("class", "xaxis1")
         .attr("transform", "translate(0," + this.height + ")")
-        .call(this.xAxis);
+        .call(this.xAxis1);
 
     this.context.append("g")
-        .attr("class", "axis axis--x")
+        .attr("class", "xaxis2")
         .attr("transform", "translate(0," + this.height2 + ")")
         .call(this.xAxis2);
   }
@@ -148,9 +155,85 @@ class Plot {
 
   drawAxisY(){
       this.focus.append("g")
-        .attr("class", "axis axis--y")
+        .attr("class", "yaxis")
         .call(this.yAxis);
   }
+
+ // ** Update data section (Called from the onclick)
+ update(new_data) {
+    // Problem loss of zoom and brush
+
+    //return;
+
+    // Get the data again
+    // d3.csv("data-alt.csv", function(error, data) {
+    //     data.forEach(function(d) {
+    //     d.date = parseDate(d.date);
+    //     d.close = +d.close;
+    //   });
+    this.curr_data = new_data;
+
+    // Scale the range of the data again 
+    // x.domain(d3.extent(data, function(d) { return d.date; }));
+    // y.domain([0, d3.max(data, function(d) { return d.close; })]);
+    this.createXScaleAxis();
+    this.createYScaleAxis();    
+    this.createBrush();
+    this.createZoom();
+
+    // Select the section we want to apply our changes to
+    //var svg = d3.select("body").transition();
+    var focus = this.svg.selectAll(".focus").transition();
+    var context = this.svg.selectAll(".context").transition();
+
+    // Make the changes
+    // focus.select(".line")   // change the line
+    //         .duration(750)
+    //         .attr("d", valueline(data));
+    // focus.select(".fxaxis") // change the x axis
+    //         .duration(750)
+    //         .call(this.xAxis1);
+
+
+    focus.select(".xaxis1") // change the y axis
+            .duration(750)
+            .call(this.xAxis1);
+
+    //actually this never changes
+    // context.select(".xaxis2") 
+    //         .duration(750)
+    //         .call(this.xAxis2);
+
+    focus.select(".yaxis") // change the y axis
+            .duration(750)
+            .call(this.yAxis);
+
+    focus.select(".line") // change the y axis
+            .duration(750)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            //.attr("clip-path", "url(#clip)") // no need (done in css)
+            .attr("d", this.line1(this.curr_data));
+
+    context.select(".line")
+            .attr("fill", "none")
+          .attr("stroke", "steelblue")
+          .attr("stroke-width", 1.5)
+          .attr("d", this.line2(this.curr_data));
+
+
+   // this.focus.append("path")
+   //      .datum(this.curr_data)
+   //      .attr("class", "line")
+   //      .attr("fill", "none")
+   //      .attr("stroke", "steelblue")
+   //      .attr("stroke-width", 1.5)
+   //      //.attr("clip-path", "url(#clip)") // no need (done in css)
+   //      .attr("d", this.line1);
+
+      //});
+  } 
 
   addClip(){
     this.svg.append("defs").append("clipPath")
@@ -186,7 +269,7 @@ class Plot {
   this.s = d3.event.selection || this.x2.range();
   this.x1.domain(this.s.map(this.x2.invert, this.x2));
   this.focus.select(".line").attr("d", this.line1);
-  this.focus.select(".axis--x").call(this.xAxis);
+  this.focus.select(".xaxis1").call(this.xAxis1);
   this.svg.select(".zoom").call(this.zoom.transform, d3.zoomIdentity
       .scale(this.width / (this.s[1] - this.s[0]))
       .translate(-this.s[0], 0));
@@ -197,7 +280,7 @@ class Plot {
     this.t = d3.event.transform;
     this.x1.domain(this.t.rescaleX(this.x2).domain());
     this.focus.select(".line").attr("d", this.line1);
-    this.focus.select(".axis--x").call(this.xAxis);
+    this.focus.select(".xaxis1").call(this.xAxis1);
     this.context.select(".brush").call(this.brush.move, this.x1.range().map(this.t.invertX, this.t));
     //context.select(".brush").call(brush.move, [x(60), x(120)]);
   }
@@ -235,40 +318,69 @@ d3.select('#show-ratio').on('click', showAggregateRatio);
 d3.select('#show-total').on('click', showTotal);
 
 function showReplies() {
-  time_plot.curr_data = model.getRepliesByDate();
-  time_plot.draw();
+  // time_plot.curr_data = model.getRepliesByDate();
+  // time_plot.draw();
+
+  var new_data = model.getRepliesByDate();
+  time_plot.update(new_data);
 
   return;
 }
 
 function showRetweets() {
-  time_plot.curr_data = model.getRetweetsByDate();
-  time_plot.draw();
+  // time_plot.curr_data = model.getRetweetsByDate();
+  // time_plot.draw();
+
+  var new_data = model.getRetweetsByDate();
+  time_plot.update(new_data);
+
+
   return;
 }
 
 function showLikes() {
-  time_plot.curr_data = model.getLikesByDate();
-  time_plot.draw();
+  // time_plot.curr_data = model.getLikesByDate();
+  // time_plot.draw();
+
+
+  var new_data = model.getLikesByDate();
+  time_plot.update(new_data);
+
+
+
   return;
 }
 
 function showAverageRatio() {
-  time_plot.curr_data = model.getAverageRatioByDate();
-  time_plot.draw();
+  // time_plot.curr_data = model.getAverageRatioByDate();
+  // time_plot.draw();
+
+  var new_data = model.getAverageRatioByDate();
+  time_plot.update(new_data);
+
   return;
 }
 
 
 function showAggregateRatio() {
-  time_plot.curr_data = model.getAggregateRatioByDate();
-  time_plot.draw();
+  // time_plot.curr_data = model.getAggregateRatioByDate();
+  // time_plot.draw();
+
+  var new_data = model.getAggregateRatioByDate();
+  time_plot.update(new_data);
+
+
+
   return;
 }
 
 function showTotal() {
-  time_plot.curr_data = model.getTotalByDate();
-  time_plot.draw();
+  // time_plot.curr_data = model.getTotalByDate();
+  // time_plot.draw();
+
+  var new_data = model.getTotalByDate();
+  time_plot.update(new_data);
+
   return;
 }
 
