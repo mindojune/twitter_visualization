@@ -17,6 +17,7 @@ class Plot {
       this.parseDate = d3.timeParse("%Y-%m-%d");
       this.curr_data = curr_data;
 
+      this.zoomed_flag = 0;
   } 
 
   draw() {
@@ -77,8 +78,6 @@ class Plot {
   }
 
   drawFocus(){
-
-
     this.focus = this.svg.selectAll('.focus');
 
     //this.focus.remove(); //
@@ -86,21 +85,15 @@ class Plot {
     this.focus = this.svg.append("g")
         .attr("class", "focus")
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-  
-
   }
 
   drawContext(){
     this.context = this.svg.selectAll('.context');
 
     //this.context.remove();
-
     this.context = this.svg.append("g")
         .attr("class", "context")
         .attr("transform", "translate(" + this.margin2.left + "," + this.margin2.top + ")");
-
-
-
   }
 
 
@@ -159,82 +152,6 @@ class Plot {
         .call(this.yAxis);
   }
 
- // ** Update data section (Called from the onclick)
- update(new_data) {
-    // Problem loss of zoom and brush
-
-    //return;
-
-    // Get the data again
-    // d3.csv("data-alt.csv", function(error, data) {
-    //     data.forEach(function(d) {
-    //     d.date = parseDate(d.date);
-    //     d.close = +d.close;
-    //   });
-    this.curr_data = new_data;
-
-    // Scale the range of the data again 
-    // x.domain(d3.extent(data, function(d) { return d.date; }));
-    // y.domain([0, d3.max(data, function(d) { return d.close; })]);
-    this.createXScaleAxis();
-    this.createYScaleAxis();    
-    this.createBrush();
-    this.createZoom();
-
-    // Select the section we want to apply our changes to
-    //var svg = d3.select("body").transition();
-    var focus = this.svg.selectAll(".focus").transition();
-    var context = this.svg.selectAll(".context").transition();
-
-    // Make the changes
-    // focus.select(".line")   // change the line
-    //         .duration(750)
-    //         .attr("d", valueline(data));
-    // focus.select(".fxaxis") // change the x axis
-    //         .duration(750)
-    //         .call(this.xAxis1);
-
-
-    focus.select(".xaxis1") // change the y axis
-            .duration(750)
-            .call(this.xAxis1);
-
-    //actually this never changes
-    // context.select(".xaxis2") 
-    //         .duration(750)
-    //         .call(this.xAxis2);
-
-    focus.select(".yaxis") // change the y axis
-            .duration(750)
-            .call(this.yAxis);
-
-    focus.select(".line") // change the y axis
-            .duration(750)
-            .attr("fill", "none")
-            .attr("stroke", "steelblue")
-            .attr("stroke-width", 1.5)
-            //.attr("clip-path", "url(#clip)") // no need (done in css)
-            .attr("d", this.line1(this.curr_data));
-
-    context.select(".line")
-            .attr("fill", "none")
-          .attr("stroke", "steelblue")
-          .attr("stroke-width", 1.5)
-          .attr("d", this.line2(this.curr_data));
-
-
-   // this.focus.append("path")
-   //      .datum(this.curr_data)
-   //      .attr("class", "line")
-   //      .attr("fill", "none")
-   //      .attr("stroke", "steelblue")
-   //      .attr("stroke-width", 1.5)
-   //      //.attr("clip-path", "url(#clip)") // no need (done in css)
-   //      .attr("d", this.line1);
-
-      //});
-  } 
-
   addClip(){
     this.svg.append("defs").append("clipPath")
       .attr("id", "clip")
@@ -251,7 +168,6 @@ class Plot {
         .attr("class", "brush")
         .call(this.brush)
         .call(this.brush.move, this.x1.range());
-
   }
 
   addZoom(){
@@ -268,8 +184,10 @@ class Plot {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
   this.s = d3.event.selection || this.x2.range();
   this.x1.domain(this.s.map(this.x2.invert, this.x2));
-  this.focus.select(".line").attr("d", this.line1);
+  this.focus.select(".line").attr("d", this.line1(this.curr_data));
   this.focus.select(".xaxis1").call(this.xAxis1);
+
+  // Fix here
   this.svg.select(".zoom").call(this.zoom.transform, d3.zoomIdentity
       .scale(this.width / (this.s[1] - this.s[0]))
       .translate(-this.s[0], 0));
@@ -279,11 +197,72 @@ class Plot {
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
     this.t = d3.event.transform;
     this.x1.domain(this.t.rescaleX(this.x2).domain());
-    this.focus.select(".line").attr("d", this.line1);
+    this.focus.select(".line").attr("d", this.line1(this.curr_data));
     this.focus.select(".xaxis1").call(this.xAxis1);
     this.context.select(".brush").call(this.brush.move, this.x1.range().map(this.t.invertX, this.t));
     //context.select(".brush").call(brush.move, [x(60), x(120)]);
+    this.zoomed_flag = 1;
   }
+
+
+ // ** Update data section (Called from the onclick)
+ update(new_data) {
+    // this.prev_s = this.s;
+    // this.flag = 1;
+
+    // Problem: changem zoom then brush => bug
+    this.curr_data = new_data;
+
+    // Scale the range of the data again 
+    this.createXScaleAxis();
+    this.createYScaleAxis();    
+    this.createBrush();
+    this.createZoom();
+
+
+
+    // Remain zoomed
+    if(this.zoomed_flag == 1){
+      this.x1.domain(this.t.rescaleX(this.x2).domain());
+    }
+
+    // Select the section we want to apply our changes to
+    var svg = d3.selectAll('svg').transition();
+    var focus = this.svg.selectAll(".focus").transition();
+    var context = this.svg.selectAll(".context").transition();
+
+
+    focus.select(".xaxis1") // change the y axis
+            .duration(750)
+            .call(this.xAxis1);
+
+    // actually this never changes
+    context.select(".xaxis2") 
+            .duration(750)
+            .call(this.xAxis2);
+
+    focus.select(".yaxis") // change the y axis
+            .duration(750)
+            .call(this.yAxis);
+
+    focus.select(".line") // change the y axis
+            .duration(750)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            //.attr("clip-path", "url(#clip)") // no need (done in css)
+            .attr("d", this.line1(this.curr_data));
+
+    context.select(".line")
+             .duration(750)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+           .attr("d", this.line2(this.curr_data));
+
+
+  } 
+
 
 }
 
