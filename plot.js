@@ -1,6 +1,8 @@
 'use strict';
 
-// TODO 1: http://bl.ocks.org/d3noob/7030f35b72de721622b8 make it work
+// TODO 1: Showing 2 plots
+// Idea 1: Combine them inside the model... and give them two diff thems.
+// Idea 2: Two separate streams ==> seems more straightfoward why not? => x axis and stuff
 // TODO 2: Idea for Bottom Aggregate Visualization
 
 class Plot {
@@ -98,34 +100,59 @@ class Plot {
   drawLine1(){
     var $this = this;
 
-    this.line1 = d3.line()
+    this.line1MAGA = d3.line()
         .x(function(d) { return $this.x1(d.date); })
-        .y(function(d) { return $this.y1(d.value); });
+        .y(function(d) { return $this.y1(d.value1); });
+
+    this.line1METOO = d3.line()
+        .x(function(d) { return $this.x1(d.date); })
+        .y(function(d) { return $this.y1(d.value2); });
 
     //draw upper line1
     this.focus.append("path")
         .datum(this.curr_data1)
-        .attr("class", "line1")
+        .attr("class", "line1MAGA")
+        .attr("fill", "none")
+        .attr("stroke", "red")
+        .attr("stroke-width", 1.5)
+        //.attr("clip-path", "url(#clip)") // no need (done in css)
+        .attr("d", this.line1MAGA);
+
+    this.focus.append("path")
+        .datum(this.curr_data1)
+        .attr("class", "lineMETOO")
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1.5)
         //.attr("clip-path", "url(#clip)") // no need (done in css)
-        .attr("d", this.line1);
+        .attr("d", this.line1METOO);        
   }
 
   drawLine2(){
     var $this = this;
-    this.line2 = d3.line()
+    this.line2MAGA = d3.line()
         .x(function(d) { return $this.x2(d.date); })
-        .y(function(d) { return $this.y2(d.value); });
+        .y(function(d) { return $this.y2(d.value1); });
+
+    this.line2METOO = d3.line()
+        .x(function(d) { return $this.x2(d.date); })
+        .y(function(d) { return $this.y2(d.value2); });
 
     this.context.append("path")
         .datum(this.curr_data1)
-        .attr("class", "line2")
+        .attr("class", "line2MAGA")
+        .attr("fill", "none")
+        .attr("stroke", "red")
+        .attr("stroke-width", 1.5)
+        .attr("d", this.line2MAGA);
+
+    this.context.append("path")
+        .datum(this.curr_data1)
+        .attr("class", "line2METOO")
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1.5)
-        .attr("d", this.line2);
+        .attr("d", this.line2METOO);        
   }
 
   drawAxisX(){
@@ -177,7 +204,8 @@ class Plot {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
   this.s = d3.event.selection || this.x2.range();
   this.x1.domain(this.s.map(this.x2.invert, this.x2));
-  this.focus.select(".line1").attr("d", this.line1(this.curr_data1));
+  this.focus.select(".line1MAGA").attr("d", this.line1MAGA(this.curr_data1));
+  this.focus.select(".line1METOO").attr("d", this.line1METOO(this.curr_data1));
   this.focus.select(".xaxis1").call(this.xAxis1);
 
   // Fix here
@@ -190,7 +218,8 @@ class Plot {
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
     this.t = d3.event.transform;
     this.x1.domain(this.t.rescaleX(this.x2).domain());
-    this.focus.select(".line1").attr("d", this.line1(this.curr_data1));
+    this.focus.select(".line1MAGA").attr("d", this.line1MAGA(this.curr_data1));
+     this.focus.select(".line1METOO").attr("d", this.line1METOO(this.curr_data1));
     this.focus.select(".xaxis1").call(this.xAxis1);
     this.context.select(".brush").call(this.brush.move, this.x1.range().map(this.t.invertX, this.t));
     //context.select(".brush").call(brush.move, [x(60), x(120)]);
@@ -236,20 +265,35 @@ class Plot {
             .duration(750)
             .call(this.yAxis);
 
-    focus.select(".line1") // change the y axis
+    focus.select(".line1MAGA") // change the y axis
+            .duration(750)
+            .attr("fill", "none")
+            .attr("stroke", "red")
+            .attr("stroke-width", 1.5)
+            //.attr("clip-path", "url(#clip)") // no need (done in css)
+            .attr("d", this.line1MAGA(this.curr_data1));
+    
+    focus.select(".line1METOO") // change the y axis
             .duration(750)
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
             //.attr("clip-path", "url(#clip)") // no need (done in css)
-            .attr("d", this.line1(this.curr_data1));
+            .attr("d", this.line1METOO(this.curr_data1));
 
-    context.select(".line2")
+    context.select(".line2MAGA")
+             .duration(750)
+            .attr("fill", "none")
+            .attr("stroke", "red")
+            .attr("stroke-width", 1.5)
+           .attr("d", this.line2MAGA(this.curr_data1));
+
+    context.select(".line2METOO")
              .duration(750)
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
-           .attr("d", this.line2(this.curr_data1));
+             .attr("d", this.line2METOO(this.curr_data1));       
   } 
 
 }
@@ -289,32 +333,26 @@ d3.select('#show-ratio').on('click', showAggregateRatio);
 d3.select('#show-total').on('click', showTotal);
 
 function showReplies() {
-  // time_plot.curr_data = model.getRepliesByDate();
-  // time_plot.draw();
   var new_data = model.getRepliesByDate();
   time_plot.update(new_data);
+  //console.log(new_data);
   return;
 }
 
 function showRetweets() {
-  // time_plot.curr_data = model.getRetweetsByDate();
-  // time_plot.draw();
   var new_data = model.getRetweetsByDate();
   time_plot.update(new_data);
+  //console.log(new_data);
   return;
 }
 
 function showLikes() {
-  // time_plot.curr_data = model.getLikesByDate();
-  // time_plot.draw();
   var new_data = model.getLikesByDate();
   time_plot.update(new_data);
   return;
 }
 
 function showAverageRatio() {
-  // time_plot.curr_data = model.getAverageRatioByDate();
-  // time_plot.draw();
   var new_data = model.getAverageRatioByDate();
   time_plot.update(new_data);
 
@@ -323,8 +361,6 @@ function showAverageRatio() {
 
 
 function showAggregateRatio() {
-  // time_plot.curr_data = model.getAggregateRatioByDate();
-  // time_plot.draw();
   var new_data = model.getAggregateRatioByDate();
   time_plot.update(new_data);
 
@@ -334,8 +370,6 @@ function showAggregateRatio() {
 }
 
 function showTotal() {
-  // time_plot.curr_data = model.getTotalByDate();
-  // time_plot.draw();
   var new_data = model.getTotalByDate();
   time_plot.update(new_data);
 
