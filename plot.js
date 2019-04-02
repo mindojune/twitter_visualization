@@ -6,7 +6,7 @@
 // TODO 2: Idea for Bottom Aggregate Visualization
 
 class Plot {
-  constructor(curr_data1, curr_data2) {
+  constructor(curr_data1) {
       this.svg = d3.selectAll("svg");
 
       this.margin  = {top: 20, bottom: 110, right: 20,  left: 80};
@@ -19,7 +19,7 @@ class Plot {
       this.parseDate = d3.timeParse("%Y-%m-%d");
       
       this.curr_data1 = curr_data1;
-      this.curr_data2 = curr_data2;
+
 
       this.zoomed_flag = 0;
   } 
@@ -120,7 +120,7 @@ class Plot {
 
     this.focus.append("path")
         .datum(this.curr_data1)
-        .attr("class", "lineMETOO")
+        .attr("class", "line1METOO")
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1.5)
@@ -303,19 +303,14 @@ var time_plot;
 const model = new Model('data/clean_maga_011518_041418.json', 'data/clean_metoo_011518_041418.json');
 model.loadData()
   .then(([data1, data2]) => {
-    // model.data1 = data1;
-    // model.data2 = data2;
+    model.data1 = data1;
+    model.data2 = data2;
 
-    model.data2 = data1;
-    model.data1 = data2;
+    // Default View
+    var repliesByDate = model.getRepliesByDate();
+    var curr_data1 = repliesByDate;
 
-    var tweetsByDate = model.getTweetsByDate();
-    var likesByDate = model.getRepliesByDate();
-
-    var curr_data1 = likesByDate;
-
-    // Implement this
-    time_plot = new Plot(curr_data1, curr_data1);
+    time_plot = new Plot(curr_data1);
     time_plot.draw();
 
 });
