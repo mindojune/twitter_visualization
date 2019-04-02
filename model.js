@@ -31,9 +31,7 @@ class Model {
 
   }
 
-  // TODO: roll up maga first, give them name d.value_maga
-  //       in a separate var, roll up by metoo give them name d.value_metoo
-  // Combine them by date so that each data comes with both maga and metoo
+  // TODO: Rightnow METOO date is clipped to MAGA's?
 
   getTweetsByDate(){
     var tweetsByDate = d3.nest()
