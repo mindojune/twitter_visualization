@@ -108,7 +108,7 @@ class Plot {
     //draw upper line1
     this.focus.append("path")
         .datum(this.curr_data)
-        .attr("class", "line")
+        .attr("class", "line1")
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1.5)
@@ -125,7 +125,7 @@ class Plot {
 
     this.context.append("path")
         .datum(this.curr_data)
-        .attr("class", "line")
+        .attr("class", "line2")
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1.5)
@@ -184,7 +184,7 @@ class Plot {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
   this.s = d3.event.selection || this.x2.range();
   this.x1.domain(this.s.map(this.x2.invert, this.x2));
-  this.focus.select(".line").attr("d", this.line1(this.curr_data));
+  this.focus.select(".line1").attr("d", this.line1(this.curr_data));
   this.focus.select(".xaxis1").call(this.xAxis1);
 
   // Fix here
@@ -197,7 +197,7 @@ class Plot {
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
     this.t = d3.event.transform;
     this.x1.domain(this.t.rescaleX(this.x2).domain());
-    this.focus.select(".line").attr("d", this.line1(this.curr_data));
+    this.focus.select(".line1").attr("d", this.line1(this.curr_data));
     this.focus.select(".xaxis1").call(this.xAxis1);
     this.context.select(".brush").call(this.brush.move, this.x1.range().map(this.t.invertX, this.t));
     //context.select(".brush").call(brush.move, [x(60), x(120)]);
@@ -245,7 +245,7 @@ class Plot {
             .duration(750)
             .call(this.yAxis);
 
-    focus.select(".line") // change the y axis
+    focus.select(".line1") // change the y axis
             .duration(750)
             .attr("fill", "none")
             .attr("stroke", "steelblue")
@@ -253,7 +253,7 @@ class Plot {
             //.attr("clip-path", "url(#clip)") // no need (done in css)
             .attr("d", this.line1(this.curr_data));
 
-    context.select(".line")
+    context.select(".line2")
              .duration(750)
             .attr("fill", "none")
             .attr("stroke", "steelblue")
