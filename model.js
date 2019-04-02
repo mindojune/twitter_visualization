@@ -3,28 +3,38 @@
 var parseDate = d3.timeParse("%Y-%m-%d");
 
 class Model {
-  constructor(dataSource) {
-    this.dataSource = dataSource;
-    this.data = [];
-
+  constructor(dataSource_MAGA, dataSource_METOO) {
+    this.dataSource_MAGA = dataSource_MAGA;
+    this.dataSource_METOO = dataSource_METOO;
+    this.data1 = [];
+    this.data2 = [];
   }
 
   loadData() {
     return new Promise((resolve, reject) => {
-      d3.json(this.dataSource, (error, data) => {
-        if (error) {
-          reject(error);
+      d3.json(this.dataSource_MAGA, (error1, data1) => {
+        if (error1) {
+          reject(error1);
         } else {
-          resolve(data);
+          //resolve(data1);
+          d3.json(this.dataSource_METOO, (error2, data2) => {
+              if (error2){
+                reject(error2)
+              } else {
+                resolve([data1,data2])
+              }
+
+          })
         }
-      });
+      })
     });
+
   }
 
   getTweetsByDate(){
     var tweetsByDate = d3.nest()
       .key(function(d) { return d.date; })
-      .entries(this.data);
+      .entries(this.data1);
 
     tweetsByDate.forEach(function(d) {
      d.date = parseDate(d.key);
@@ -39,7 +49,7 @@ class Model {
     var likesByDate = d3.nest()
       .key(function(d) { return d.date; })
       .rollup(function(v) { return d3.sum(v, function(d) { return d.likes; }); })
-      .entries(this.data);
+      .entries(this.data1);
 
     likesByDate.forEach(function(d) {
      d.date = parseDate(d.key);
@@ -53,7 +63,7 @@ class Model {
     var retweetsByDate = d3.nest()
       .key(function(d) { return d.date; })
       .rollup(function(v) { return d3.sum(v, function(d) { return d.retweets; }); })
-      .entries(this.data);
+      .entries(this.data1);
 
     retweetsByDate.forEach(function(d) {
      d.date = parseDate(d.key);
@@ -68,7 +78,7 @@ class Model {
     var repliesByDate = d3.nest()
       .key(function(d) { return d.date; })
       .rollup(function(v) { return d3.sum(v, function(d) { return d.replies; }); })
-      .entries(this.data);
+      .entries(this.data1);
 
     repliesByDate.forEach(function(d) {
      d.date = parseDate(d.key);
@@ -88,7 +98,7 @@ class Model {
           }); 
 
                           })
-      .entries(this.data);
+      .entries(this.data1);
 
     averageratioByDate.forEach(function(d) {
      d.date = parseDate(d.key);
@@ -109,7 +119,7 @@ class Model {
                 (d3.sum(v, function(d) { return d.likes})
                 +d3.sum(v, function(d) { return d.retweets})); 
             })
-      .entries(this.data);
+      .entries(this.data1);
 
     aggregateratioByDate.forEach(function(d) {
      d.date = parseDate(d.key);
@@ -123,7 +133,7 @@ class Model {
     var totalByDate = d3.nest()
       .key(function(d) { return d.date; })
       .rollup(function(v) { return d3.sum(v, function(d) { return d.replies + d.retweets + d.likes; }); })
-      .entries(this.data);
+      .entries(this.data1);
 
     totalByDate.forEach(function(d) {
      d.date = parseDate(d.key);

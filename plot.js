@@ -4,7 +4,7 @@
 // TODO 2: Idea for Bottom Aggregate Visualization
 
 class Plot {
-  constructor(curr_data) {
+  constructor(curr_data1, curr_data2) {
       this.svg = d3.selectAll("svg");
 
       this.margin  = {top: 20, bottom: 110, right: 20,  left: 80};
@@ -15,7 +15,9 @@ class Plot {
       this.height2 = +this.svg.attr("height")/(2) - this.margin2.top - this.margin2.bottom; // 40
       this.height3 = +this.svg.attr("height") -this.margin3.top - this.margin3.bottom ; // 40
       this.parseDate = d3.timeParse("%Y-%m-%d");
-      this.curr_data = curr_data;
+      
+      this.curr_data1 = curr_data1;
+      this.curr_data2 = curr_data2;
 
       this.zoomed_flag = 0;
   } 
@@ -36,7 +38,6 @@ class Plot {
     this.addClip();
     this.addBrush();
     this.addZoom();
-
   }
 
 
@@ -46,16 +47,15 @@ class Plot {
       this.x2 = d3.scaleTime().range([0, this.width]);
       this.xAxis1 = d3.axisBottom(this.x1);
       this.xAxis2 = d3.axisBottom(this.x2);
-      this.x1.domain(d3.extent(this.curr_data, function(d) { return d.date; }));  
+      this.x1.domain(d3.extent(this.curr_data1, function(d) { return d.date; }));  
       this.x2.domain(this.x1.domain());
-
   }
 
   createYScaleAxis() {
       this.y1 = d3.scaleLinear().range([this.height, 0]),
       this.y2 = d3.scaleLinear().range([this.height2, 0]);
       this.yAxis = d3.axisLeft(this.y1);
-      this.y1.domain([0, d3.max(this.curr_data, function(d) { return d.value; })]);
+      this.y1.domain([0, d3.max(this.curr_data1, function(d) { return d.value; })]);
       this.y2.domain(this.y1.domain());
   }
 
@@ -74,14 +74,12 @@ class Plot {
       .translateExtent([[0, 0], [this.width, this.height]])
       .extent([[0, 0], [this.width, this.height]])
       .on("zoom", this.zoomed.bind(this));
-
   }
 
   drawFocus(){
     this.focus = this.svg.selectAll('.focus');
 
     //this.focus.remove(); //
-
     this.focus = this.svg.append("g")
         .attr("class", "focus")
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
@@ -104,17 +102,15 @@ class Plot {
         .x(function(d) { return $this.x1(d.date); })
         .y(function(d) { return $this.y1(d.value); });
 
-
     //draw upper line1
     this.focus.append("path")
-        .datum(this.curr_data)
+        .datum(this.curr_data1)
         .attr("class", "line1")
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1.5)
         //.attr("clip-path", "url(#clip)") // no need (done in css)
         .attr("d", this.line1);
-
   }
 
   drawLine2(){
@@ -124,13 +120,12 @@ class Plot {
         .y(function(d) { return $this.y2(d.value); });
 
     this.context.append("path")
-        .datum(this.curr_data)
+        .datum(this.curr_data1)
         .attr("class", "line2")
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1.5)
         .attr("d", this.line2);
-
   }
 
   drawAxisX(){
@@ -160,7 +155,6 @@ class Plot {
       .attr("height", this.height)
       .attr("x", 0)
       .attr("y", 0);
-
   }
 
   addBrush(){
@@ -171,7 +165,6 @@ class Plot {
   }
 
   addZoom(){
-
     this.svg.append("rect")
         .attr("class", "zoom")
         .attr("width", this.width)
@@ -184,7 +177,7 @@ class Plot {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
   this.s = d3.event.selection || this.x2.range();
   this.x1.domain(this.s.map(this.x2.invert, this.x2));
-  this.focus.select(".line1").attr("d", this.line1(this.curr_data));
+  this.focus.select(".line1").attr("d", this.line1(this.curr_data1));
   this.focus.select(".xaxis1").call(this.xAxis1);
 
   // Fix here
@@ -197,7 +190,7 @@ class Plot {
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
     this.t = d3.event.transform;
     this.x1.domain(this.t.rescaleX(this.x2).domain());
-    this.focus.select(".line1").attr("d", this.line1(this.curr_data));
+    this.focus.select(".line1").attr("d", this.line1(this.curr_data1));
     this.focus.select(".xaxis1").call(this.xAxis1);
     this.context.select(".brush").call(this.brush.move, this.x1.range().map(this.t.invertX, this.t));
     //context.select(".brush").call(brush.move, [x(60), x(120)]);
@@ -205,21 +198,19 @@ class Plot {
   }
 
 
- // ** Update data section (Called from the onclick)
+ // Update data section: the order of the functions calls are important
  update(new_data) {
     // this.prev_s = this.s;
     // this.flag = 1;
 
     // Problem: changem zoom then brush => bug
-    this.curr_data = new_data;
+    this.curr_data1 = new_data;
 
     // Scale the range of the data again 
     this.createXScaleAxis();
     this.createYScaleAxis();    
     this.createBrush();
     this.createZoom();
-
-
 
     // Remain zoomed
     if(this.zoomed_flag == 1){
@@ -251,18 +242,15 @@ class Plot {
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
             //.attr("clip-path", "url(#clip)") // no need (done in css)
-            .attr("d", this.line1(this.curr_data));
+            .attr("d", this.line1(this.curr_data1));
 
     context.select(".line2")
              .duration(750)
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
-           .attr("d", this.line2(this.curr_data));
-
-
+           .attr("d", this.line2(this.curr_data1));
   } 
-
 
 }
 
@@ -270,18 +258,22 @@ class Plot {
 ///////////////////////////////////////////////
 // data loading and drawing <=> "main()" part of the function
 var time_plot;
-const model = new Model('data/clean_maga_011518_041418.json');
+const model = new Model('data/clean_maga_011518_041418.json', 'data/clean_metoo_011518_041418.json');
 model.loadData()
-  .then((data) => {
-    model.data = data;
+  .then(([data1, data2]) => {
+    // model.data1 = data1;
+    // model.data2 = data2;
+
+    model.data2 = data1;
+    model.data1 = data2;
 
     var tweetsByDate = model.getTweetsByDate();
-    //console.log(JSON.stringify(tweetsByDate));
     var likesByDate = model.getRepliesByDate();
 
-    var curr_data = likesByDate;
+    var curr_data1 = likesByDate;
 
-    time_plot = new Plot(curr_data);
+    // Implement this
+    time_plot = new Plot(curr_data1, curr_data1);
     time_plot.draw();
 
 });
@@ -299,41 +291,30 @@ d3.select('#show-total').on('click', showTotal);
 function showReplies() {
   // time_plot.curr_data = model.getRepliesByDate();
   // time_plot.draw();
-
   var new_data = model.getRepliesByDate();
   time_plot.update(new_data);
-
   return;
 }
 
 function showRetweets() {
   // time_plot.curr_data = model.getRetweetsByDate();
   // time_plot.draw();
-
   var new_data = model.getRetweetsByDate();
   time_plot.update(new_data);
-
-
   return;
 }
 
 function showLikes() {
   // time_plot.curr_data = model.getLikesByDate();
   // time_plot.draw();
-
-
   var new_data = model.getLikesByDate();
   time_plot.update(new_data);
-
-
-
   return;
 }
 
 function showAverageRatio() {
   // time_plot.curr_data = model.getAverageRatioByDate();
   // time_plot.draw();
-
   var new_data = model.getAverageRatioByDate();
   time_plot.update(new_data);
 
@@ -344,7 +325,6 @@ function showAverageRatio() {
 function showAggregateRatio() {
   // time_plot.curr_data = model.getAggregateRatioByDate();
   // time_plot.draw();
-
   var new_data = model.getAggregateRatioByDate();
   time_plot.update(new_data);
 
@@ -356,7 +336,6 @@ function showAggregateRatio() {
 function showTotal() {
   // time_plot.curr_data = model.getTotalByDate();
   // time_plot.draw();
-
   var new_data = model.getTotalByDate();
   time_plot.update(new_data);
 
