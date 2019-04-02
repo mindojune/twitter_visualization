@@ -46,7 +46,7 @@ class Model {
 
     tweetsByDate.forEach(function(d) {
       var result = tweetsByDate_METOO.filter(function(METOO){
-          return d.date == METOO.date;
+          return d.key == METOO.key;
       });
        d.date = parseDate(d.key);
        d.value1 = d.value;
@@ -71,7 +71,7 @@ class Model {
 
     likesByDate.forEach(function(d) {
           var result = likesByDate_METOO.filter(function(METOO){
-          return d.date == METOO.date;
+          return d.key == METOO.key;
       });
      d.date = parseDate(d.key);
      d.value1 = d.value;
@@ -94,7 +94,7 @@ class Model {
 
     retweetsByDate.forEach(function(d) {
           var result = retweetsByDate_METOO.filter(function(METOO){
-          return d.date == METOO.date;
+          return d.key == METOO.key;          
       });
      d.date = parseDate(d.key);
      d.value1 = d.value;
@@ -118,7 +118,7 @@ class Model {
 
     repliesByDate.forEach(function(d) {
           var result = repliesByDate_METOO.filter(function(METOO){
-          return d.date == METOO.date;
+          return d.key == METOO.key;
       });
      d.date = parseDate(d.key);
      d.value1 = d.value;
@@ -151,7 +151,7 @@ class Model {
 
     averageratioByDate.forEach(function(d) {
           var result = averageratioByDate_METOO.filter(function(METOO){
-          return d.date == METOO.date;
+          return d.key == METOO.key;
       });
      d.date = parseDate(d.key);
      d.value1 = d.value;
@@ -186,7 +186,7 @@ class Model {
 
     aggregateratioByDate.forEach(function(d) {
           var result = aggregateratioByDate_METOO.filter(function(METOO){
-          return d.date == METOO.date;
+          return d.key == METOO.key;
       });
      d.date = parseDate(d.key);
      d.value1 = d.value;
@@ -210,7 +210,7 @@ class Model {
 
     totalByDate.forEach(function(d) {
           var result = totalByDate_METOO.filter(function(METOO){
-          return d.date == METOO.date;
+          return d.key == METOO.key;
       });
      d.date = parseDate(d.key);
      d.value1 = d.value;

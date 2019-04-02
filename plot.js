@@ -57,7 +57,7 @@ class Plot {
       this.y1 = d3.scaleLinear().range([this.height, 0]),
       this.y2 = d3.scaleLinear().range([this.height2, 0]);
       this.yAxis = d3.axisLeft(this.y1);
-      this.y1.domain([0, d3.max(this.curr_data1, function(d) { return d.value; })]);
+      this.y1.domain([0, d3.max(this.curr_data1, function(d) { return Math.max(d.value1, d.value2); })]);
       this.y2.domain(this.y1.domain());
   }
 
@@ -270,7 +270,6 @@ class Plot {
             .attr("fill", "none")
             .attr("stroke", "red")
             .attr("stroke-width", 1.5)
-            //.attr("clip-path", "url(#clip)") // no need (done in css)
             .attr("d", this.line1MAGA(this.curr_data1));
     
     focus.select(".line1METOO") // change the y axis
@@ -278,7 +277,6 @@ class Plot {
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
-            //.attr("clip-path", "url(#clip)") // no need (done in css)
             .attr("d", this.line1METOO(this.curr_data1));
 
     context.select(".line2MAGA")
