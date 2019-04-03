@@ -100,14 +100,10 @@ class Plot {
     var width = this.width;
     var height =this.height;
     this.drawTooltip = function() {
-
-
             var xm = x1.invert(d3.mouse(this)[0]); // THIS IS CORRECT
             var ym = y1.invert(d3.mouse(this)[1]); // THIS IS CORRECT
 
-
             const date = d3.timeFormat("%Y-%m-%d")(xm);
-            //console.log(date); 
            
              var xpos = d3.mouse(this)[0] ;
              var ypos = d3.mouse(this)[1] ;
@@ -118,7 +114,7 @@ class Plot {
                     .attr('y1', 0)
                     .attr('y2', height);
               
-                tooltip.html(date)
+                tooltip.html("Useful information regarding " + date)
                     .style('display', 'block')
                     .attr("x", xpos+10)
                     .attr("y", ypos);
@@ -135,60 +131,6 @@ class Plot {
         .on('mousemove', this.drawTooltip)
         .on('mouseout', this.removeTooltip);
 
-    ///// last resort (hard to select)
-      //  var tooltip = this.svg
-      //   .append('g')
-      //   .append('circle')
-      //     .style("fill", "red")
-      //     .attr("stroke", "black")
-      //     .attr('r', 8.5)
-      //     .style("opacity", 0);
-
-      // // Create the text that travels along the curve of chart
-      // var tooltipText = this.svg
-      //   .append('g')
-      //   .append('text')
-      //     .style("opacity", 0)
-      //     .attr("text-anchor", "left")
-      //     .attr("alignment-baseline", "middle");
-
-      // this.mouseover = function() {
-      //   tooltip.style("opacity", 1)
-      //   tooltipText.style("opacity",1)
-      // }
-
-      // var x1 = this.x1;
-      // var y1 = this.y1;
-      // var bisect = d3.bisector(function(d) { return d.x; }).left;
-      // var data = this.curr_data1;
-
-      // this.mousemove= function() {
-      //   d3.event.preventDefault();
-      //   // const ym = y1.invert(d3.event.layerY);
-      //   // const xm = x1.invert(d3.event.layerX);
-        
-      //   var xm = x1.invert(d3.mouse(this)[0]);
-      //   var ym = y1.invert(d3.mouse(this)[1]);
-      //   var xpos = d3.mouse(this)[0] + 80;
-      //   var ypos = d3.mouse(this)[1] + 15;
-
-      //   tooltip
-      //       .attr("cx", xpos)
-      //       .attr("cy", ypos);
-      //   tooltipText
-      //     .html("Some useful stuff")
-      //     // .attr("x", d3.mouse(this)[0])
-      //     // .attr("y", d3.mouse(this)[1])
-      //     .attr("x", xpos)
-      //     .attr("y", ypos);
-      //     //.attr("transform", `translate(${x1(xm)},${y1(ym)})`);
-
-      //   }
-
-      // this.mouseleave= function() {
-      //   tooltip.style("opacity", 0)
-      //   tooltipText.style("opacity", 0)
-      // }
   }
 
   drawFocus(){
