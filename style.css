@@ -49,15 +49,30 @@ h1 {
 
 
 
-div.tooltip { 
+div.tooltip1 { 
     position: absolute;     
-    text-align: center;     
-    width: 60px;          
-    height: 28px;         
+    /*text-align: center;     */
+    width: 120px;          
+    height: 56px;         
     padding: 2px;       
-    font: 12px sans-serif;    
-    background: lightsteelblue; 
+    font: 10px noto;    
+    background: red; 
     border: 0px;    
-    border-radius: 8px;     
+    border-radius: 2px;     
     pointer-events: none;     
 }
+
+
+div.tooltip2 { 
+    position: absolute;     
+    /*text-align: center;*/     
+    width: 120px;          
+    height: 56px;        
+    padding: 2px;       
+    font: 10px noto;    
+    background: lightsteelblue; 
+    border: 0px;    
+    border-radius: 2px;     
+    pointer-events: none;     
+}
+

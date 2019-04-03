@@ -99,21 +99,32 @@ class Plot {
 
   createToolTip(){
     
-    //const tooltip = this.focus.append('div').attr("class", "tooltip").style("opacity", 0);
-    const tooltip = this.focus.append('text'); //.attr("class", "tooltip").style("opacity", 1);
+    const tooltip1 = d3.select('body').append('div').attr("class", "tooltip1").style("opacity", 0.0);
+    const tooltip2 = d3.select('body').append('div').attr("class", "tooltip2").style("opacity", 0.0);
+    //const tooltip = this.focus.append('text'); //.attr("class", "tooltip").style("opacity", 1);
     const tooltipLine = this.focus.append('line');
 
       var x1 = this.x1;
       var y1 = this.y1;
 
      this.removeTooltip = function() {
-          if (tooltip) tooltip.style('display', 'none');
-          if (tooltipLine) tooltipLine.attr('stroke', 'none');
+          if (tooltip1) 
+            //tooltip.style("display", "none");
+            tooltip1.style("visibility", "hidden");
+          if (tooltip2) 
+            tooltip2.style("visibility", "hidden");
+          if (tooltipLine) 
+            tooltipLine.attr('stroke', 'none');
         }
 
     var width = this.width;
     var height =this.height;
     var $this = this;
+
+    this.mouseover = function(){
+        tooltip1.style("visibility", "visible");
+        tooltip2.style("visibility", "visible");
+    }
 
     this.drawTooltip = function() {
             var xm = x1.invert(d3.mouse(this)[0]); // THIS IS CORRECT
@@ -127,9 +138,7 @@ class Plot {
             var topTweeterMAGA = res[0][0];
             var topTweeterMETOO = res[1][0];            
             var topTweetMAGA = res[0][1];
-            var topTweetMETOO = res[1][1];
-
-                        
+            var topTweetMETOO = res[1][1];   
 
             var xpos = d3.mouse(this)[0] ;
             var ypos = d3.mouse(this)[1] ;
@@ -142,36 +151,33 @@ class Plot {
                 .attr('y1', 0)
                 .attr('y2', height);    
 
-            // Make it work
-            // tooltip.transition()        
-            //         .duration(200)      
-            //         .style("opacity", .9);      
-            // tooltip.html("qdw")  
-            //         .style("left", xpos+10)     
-            //         .style("top", ypos);   
 
-            console.log("METOO TOP TWEET", topTweetMETOO, "by", topTweeterMETOO);
-            console.log("MAGA TOP TWEET", topTweetMAGA, "by", topTweeterMAGA);
+            tooltip1.transition()     
+                //.style("visibility", "visible")
+                .duration(200)      
+                .style("opacity", .8);      
+            tooltip1.html("MAGA TOP Tweet")  
+                .text(topTweeterMAGA+": "+topTweetMAGA)
+                .attr("font-family", "noto")
+                .attr("font-size", "10px")
+                .style("left", (d3.event.pageX) + "px")     
+                .style("top", (d3.event.pageY - 28) + "px");    
+ 
+             tooltip2.transition()     
+                //.style("visibility", "visible")
+                .duration(200)      
+                .style("opacity", .8);      
+            tooltip2.html("METOO TOP Tweet")  
+                .text(topTweeterMETOO+": "+topTweetMETOO)
+                .attr("font-family", "noto")
+                .attr("font-size", "10px")
+                .style("left", (d3.event.pageX + 150) + "px")     
+                .style("top", (d3.event.pageY - 28) + "px");    
+                                   
 
-            // tooltip.html(date+"\'s top Tweet: "+ topTweeterMAGA)
-            //     .style('display', 'block')
-            //     .attr("x", xpos+10)
-            //     .attr("y", ypos)
-            //     .attr("font-family", "noto")
-            //     .attr("font-size", "10px")
-            //     .append('div')
-            //     .style('color', "red")
-            //     ;
+            //console.log("METOO TOP TWEET", topTweetMETOO, "by", topTweeterMETOO);
+            //console.log("MAGA TOP TWEET", topTweetMAGA, "by", topTweeterMAGA);
 
-            // tooltip.html(date+"\'s top Tweet: "+ topTweeterMETOO)
-            //     .style('display', 'block')
-            //     .attr("x", xpos+10)
-            //     .attr("y", ypos+40)
-            //     .attr("font-family", "noto")
-            //     .attr("font-size", "10px")
-            //     .append('div')
-            //     .style('color', "red")
-            //     ;    
 
     }
 
@@ -180,6 +186,7 @@ class Plot {
         .attr('height', height)
         .attr('opacity', 0)
         .on('mousemove', this.drawTooltip)
+        .on('mouseover', this.mouseover)
         .on('mouseout', this.removeTooltip);
 
   }
