@@ -28,18 +28,26 @@ class Plot {
     this.createXScaleAxis();
     this.createYScaleAxis();    
     this.createBrush();
-    this.createZoom();
+    this.createZoom(); // can be optional
+
+
 
     this.drawFocus();
     this.drawContext();
+
+    this.createToolTip();
+
     this.drawLine1();
     this.drawLine2();
     this.drawAxisX();
     this.drawAxisY();    
 
+     //
+
     this.addClip();
     this.addBrush();
-    this.addZoom();
+    //this.addZoom(); // can be optional <=> this commenting (noZoom) is necessary for 
+                      // my current tooltip implementation to work: reason = right now zoom blocks clickevents
   }
 
 
@@ -78,13 +86,61 @@ class Plot {
       .on("zoom", this.zoomed.bind(this));
   }
 
+  createToolTip(){
+       var tooltip = this.svg
+        .append('g')
+        .append('circle')
+          .style("fill", "none")
+          .attr("stroke", "black")
+          .attr('r', 8.5)
+          .style("opacity", 0);
+
+      // Create the text that travels along the curve of chart
+      var tooltipText = this.svg
+        .append('g')
+        .append('text')
+          .style("opacity", 0)
+          .attr("text-anchor", "left")
+          .attr("alignment-baseline", "middle");
+
+      this.mouseover = function() {
+        tooltip.style("opacity", 1)
+        tooltipText.style("opacity",1)
+      }
+
+      var x1 = this.x1;
+      var y1 = this.y1;
+      var bisect = d3.bisector(function(d) { return d.x; }).left;
+      var data = this.curr_data1;
+
+      this.mousemove= function() {
+        //console.log(d3.mouse(this));
+        tooltip
+            // .style("left", (d3.mouse(this)[0]+70) + "px")
+            // .style("top", (d3.mouse(this)[1]) + "px")
+            .attr("cx", d3.mouse(this)[0])
+            .attr("cy", d3.mouse(this)[1])
+        tooltipText
+          .html("Some useful stuff")
+          // .style("left", (d3.mouse(this)[0]) + "px")
+          // .style("top", (d3.mouse(this)[1]) + "px")
+          .attr("x", d3.mouse(this)[0])
+          .attr("y", d3.mouse(this)[1])
+        }
+
+      this.mouseleave= function() {
+        tooltip.style("opacity", 0)
+        tooltipText.style("opacity", 0)
+      }
+  }
+
   drawFocus(){
     this.focus = this.svg.selectAll('.focus');
 
     //this.focus.remove(); //
     this.focus = this.svg.append("g")
         .attr("class", "focus")
-        .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+        .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")") ;
   }
 
   drawContext(){
@@ -98,6 +154,54 @@ class Plot {
 
 
   drawLine1(){
+      // var tooltip = this.svg
+      //   .append('g')
+      //   .append('circle')
+      //     .style("fill", "none")
+      //     .attr("stroke", "black")
+      //     .attr('r', 8.5)
+      //     .style("opacity", 0);
+
+      // // Create the text that travels along the curve of chart
+      // var tooltipText = this.svg
+      //   .append('g')
+      //   .append('text')
+      //     .style("opacity", 0)
+      //     .attr("text-anchor", "left")
+      //     .attr("alignment-baseline", "middle");
+
+      // var mouseover = function() {
+      //   tooltip.style("opacity", 1)
+      //   tooltipText.style("opacity",1)
+      // }
+
+      // var x1 = this.x1;
+      // var y1 = this.y1;
+      // var bisect = d3.bisector(function(d) { return d.x; }).left;
+      // var data = this.curr_data1;
+
+      // var mousemove= function() {
+      //   //console.log(d3.mouse(this));
+      //   tooltip
+      //       // .style("left", (d3.mouse(this)[0]+70) + "px")
+      //       // .style("top", (d3.mouse(this)[1]) + "px")
+      //       .attr("cx", d3.mouse(this)[0])
+      //       .attr("cy", d3.mouse(this)[1])
+      //   tooltipText
+      //     .html("Some useful stuff")
+      //     // .style("left", (d3.mouse(this)[0]) + "px")
+      //     // .style("top", (d3.mouse(this)[1]) + "px")
+      //     .attr("x", d3.mouse(this)[0])
+      //     .attr("y", d3.mouse(this)[1])
+      //   }
+
+      // var mouseleave= function() {
+      //   tooltip.style("opacity", 0)
+      //   tooltipText.style("opacity", 0)
+      // }
+
+    //////////
+
     var $this = this;
 
     this.line1MAGA = d3.line()
@@ -108,6 +212,7 @@ class Plot {
         .x(function(d) { return $this.x1(d.date); })
         .y(function(d) { return $this.y1(d.value2); });
 
+
     //draw upper line1
     this.focus.append("path")
         .datum(this.curr_data1)
@@ -115,8 +220,11 @@ class Plot {
         .attr("fill", "none")
         .attr("stroke", "red")
         .attr("stroke-width", 1.5)
-        //.attr("clip-path", "url(#clip)") // no need (done in css)
-        .attr("d", this.line1MAGA);
+        .attr("d", this.line1MAGA) 
+        .on("mouseover",this.mouseover)
+        .on("mousemove", this.mousemove)
+        .on("mouseleave", this.mouseleave)   
+        ;
 
     this.focus.append("path")
         .datum(this.curr_data1)
@@ -124,7 +232,6 @@ class Plot {
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1.5)
-        //.attr("clip-path", "url(#clip)") // no need (done in css)
         .attr("d", this.line1METOO);        
   }
 
@@ -164,7 +271,12 @@ class Plot {
     this.context.append("g")
         .attr("class", "xaxis2")
         .attr("transform", "translate(0," + this.height2 + ")")
-        .call(this.xAxis2);
+        .call(this.xAxis2)
+        //
+        //  .on("mouseover", () => {console.log("yaaa")})
+        // .on("mousemove", () => {console.log("yaaa")})
+        // .on("mouseleave", () => {console.log("yaaa")})
+        ;
   }
 
 
@@ -188,7 +300,8 @@ class Plot {
     this.context.append("g")
         .attr("class", "brush")
         .call(this.brush)
-        .call(this.brush.move, this.x1.range());
+        .call(this.brush.move, this.x1.range())
+        ;
   }
 
   addZoom(){
@@ -197,7 +310,8 @@ class Plot {
         .attr("width", this.width)
         .attr("height", this.height)
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")
-        .call(this.zoom);
+        .call(this.zoom) 
+        ;
   }
 
   brushed() {
@@ -328,14 +442,12 @@ d3.select('#show-total').on('click', showTotal);
 function showReplies() {
   var new_data = model.getRepliesByDate();
   time_plot.update(new_data);
-  //console.log(new_data);
   return;
 }
 
 function showRetweets() {
   var new_data = model.getRetweetsByDate();
   time_plot.update(new_data);
-  //console.log(new_data);
   return;
 }
 
@@ -348,7 +460,6 @@ function showLikes() {
 function showAverageRatio() {
   var new_data = model.getAverageRatioByDate();
   time_plot.update(new_data);
-
   return;
 }
 
@@ -356,16 +467,12 @@ function showAverageRatio() {
 function showAggregateRatio() {
   var new_data = model.getAggregateRatioByDate();
   time_plot.update(new_data);
-
-
-
   return;
 }
 
 function showTotal() {
   var new_data = model.getTotalByDate();
   time_plot.update(new_data);
-
   return;
 }
 
