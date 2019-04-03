@@ -110,7 +110,7 @@ class Plot {
     var width = this.width;
     var height =this.height;
     var $this = this;
-    
+
     this.drawTooltip = function() {
             var xm = x1.invert(d3.mouse(this)[0]); // THIS IS CORRECT
             var ym = y1.invert(d3.mouse(this)[1]); // THIS IS CORRECT
@@ -322,8 +322,7 @@ class Plot {
 
  // Update data section: the order of the functions calls are important
  update(new_data) {
-    console.log(this.selected_date);
-
+    
     // this.prev_s = this.s;
     // this.flag = 1;
 
