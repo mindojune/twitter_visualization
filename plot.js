@@ -21,7 +21,8 @@ class Plot {
       
       this.curr_data1 = curr_data1;
 
-
+      this.selected_date = -1;
+      // Ignore those but don't delete
       this.zoomed_flag = 0;
       this.brushed_flag = 0;
   } 
@@ -35,12 +36,12 @@ class Plot {
     this.drawFocus();
     this.drawContext();
 
-
-
     this.drawLine1();
     this.drawLine2();
     this.drawAxisX();
     this.drawAxisY();    
+
+    this.drawLegend();
 
     this.createToolTip();
 
@@ -50,6 +51,12 @@ class Plot {
                       // my current tooltip implementation to work: reason = right now zoom blocks clickevents
   }
 
+  drawLegend(){
+    this.svg.append("circle").attr("cx",this.width).attr("cy",this.height/10).attr("r", 6).style("fill", "red")
+    this.svg.append("circle").attr("cx",this.width).attr("cy",this.height/10+20).attr("r", 6).style("fill", "steelblue")
+    this.svg.append("text").attr("x", this.width+10).attr("y", this.height/10).text("#MAGA").attr("font-family", "noto").style("font-size", "15px").attr("alignment-baseline","middle")
+    this.svg.append("text").attr("x", this.width+10).attr("y", this.height/10+20).text("#METOO").attr("font-family", "noto").style("font-size", "15px").attr("alignment-baseline","middle")
+  }
 
 
   createXScaleAxis() {
@@ -87,7 +94,9 @@ class Plot {
   }
 
   createToolTip(){
-    const tooltip = this.focus.append('text');
+    
+    //const tooltip = this.focus.append('div').attr("class", "tooltip").style("opacity", 0);
+    const tooltip = this.focus.append('text'); //.attr("class", "tooltip").style("opacity", 1);
     const tooltipLine = this.focus.append('line');
 
       var x1 = this.x1;
@@ -100,32 +109,45 @@ class Plot {
 
     var width = this.width;
     var height =this.height;
+    var $this = this;
+    
     this.drawTooltip = function() {
             var xm = x1.invert(d3.mouse(this)[0]); // THIS IS CORRECT
             var ym = y1.invert(d3.mouse(this)[1]); // THIS IS CORRECT
 
             const date = d3.timeFormat("%Y-%m-%d")(xm);
-           
-             var xpos = d3.mouse(this)[0] ;
-             var ypos = d3.mouse(this)[1] ;
-                tooltipLine.attr('stroke', 'black')
-                    .attr("stroke-width", 2.5)
-                    .attr("x1", xpos)
-                    .attr("x2", xpos)
-                    .attr('y1', 0)
-                    .attr('y2', height);
-              
-                tooltip.html("Data on " + date)
-                    .style('display', 'block')
-                    .attr("x", xpos+10)
-                    .attr("y", ypos)
-                    .attr("font-family", "noto")
-                    .attr("font-size", "20px")
-                    ;
-                // .data(states).enter()
-                // .append('div')
-                // .style('color', d => d.color)
-                // .html(d => d.name + ': ' + d.history.find(h => h.year == year).population);
+            
+            $this.selected_date = date;
+
+            var xpos = d3.mouse(this)[0] ;
+            var ypos = d3.mouse(this)[1] ;
+            
+
+            tooltipLine.attr('stroke', 'black')
+                .attr("stroke-width", 2.5)
+                .attr("x1", xpos)
+                .attr("x2", xpos)
+                .attr('y1', 0)
+                .attr('y2', height);    
+
+            // Make it work
+            // tooltip.transition()        
+            //         .duration(200)      
+            //         .style("opacity", .9);      
+            // tooltip.html("qdw")  
+            //         .style("left", xpos+10)     
+            //         .style("top", ypos);   
+
+            tooltip.html("Data on " + date)
+                .style('display', 'block')
+                .attr("x", xpos+10)
+                .attr("y", ypos)
+                .attr("font-family", "noto")
+                .attr("font-size", "20px")
+                .append('div')
+                .style('color', "red")
+                ;
+
     }
 
     this.tipBox = this.focus.append('rect')
@@ -300,6 +322,8 @@ class Plot {
 
  // Update data section: the order of the functions calls are important
  update(new_data) {
+    console.log(this.selected_date);
+
     // this.prev_s = this.s;
     // this.flag = 1;
 
