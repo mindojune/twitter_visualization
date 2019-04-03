@@ -31,6 +31,41 @@ class Model {
 
   }
 
+  // sortByReplies(date){
+  //   var tweetsByDate = d3.nest()
+  //     .key(function(d) { return d.date; })
+  //     .entries(this.data1);
+
+  //   var tweetsBy_date = tweetsByDate.filter(function(METOO){
+  //         //console.log(METOO.key);
+  //         return METOO.key == date;
+  //   });
+  //   tweetsBy_date = tweetsBy_date[0].values;
+
+  //   var sorted_by_replies = tweetsBy_date.sort(function(x, y){
+  //       return d3.descending(x.replies, y.replies);
+  //   });
+  //   return sorted_by_replies;
+  // }
+
+  sortByLike(date){
+    var tweetsByDate = d3.nest()
+      .key(function(d) { return d.date; })
+      .entries(this.data1);
+
+    var tweetsBy_date = tweetsByDate.filter(function(METOO){
+          //console.log(METOO.key);
+          return METOO.key == date;
+    });
+    tweetsBy_date = tweetsBy_date[0].values;
+
+    var sorted_by_like = tweetsBy_date.sort(function(x, y){
+        return d3.descending(x.likes, y.likes);
+    });
+    return sorted_by_like;
+  }
+
+
   // TODO: Rightnow METOO date is clipped to MAGA's?
 
   getTweetsByDate(){

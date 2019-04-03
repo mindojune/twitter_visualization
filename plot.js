@@ -4,6 +4,7 @@
 // Idea 1: Combine them inside the model... and give them two diff thems.
 // Idea 2: Two separate streams ==> seems more straightfoward why not? => x axis and stuff
 // TODO 2: Idea for Bottom Aggregate Visualization
+// TODO 3: Some major refactoring due
 
 class Plot {
   constructor(curr_data1) {
@@ -114,10 +115,13 @@ class Plot {
                     .attr('y1', 0)
                     .attr('y2', height);
               
-                tooltip.html("Useful information regarding " + date)
+                tooltip.html("Data on " + date)
                     .style('display', 'block')
                     .attr("x", xpos+10)
-                    .attr("y", ypos);
+                    .attr("y", ypos)
+                    .attr("font-family", "noto")
+                    .attr("font-size", "20px")
+                    ;
                 // .data(states).enter()
                 // .append('div')
                 // .style('color', d => d.color)
@@ -385,6 +389,10 @@ model.loadData()
 
     time_plot = new Plot(curr_data1);
     time_plot.draw();
+
+
+    //debugging
+    model.sortByLikes("2018-03-15");
 
 });
 
