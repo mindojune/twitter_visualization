@@ -42,11 +42,10 @@ class Plot {
     this.drawAxisX();
     this.drawAxisY();    
 
-     //
 
     this.addClip();
     this.addBrush();
-    //this.addZoom(); // can be optional <=> this commenting (noZoom) is necessary for 
+    this.addZoom(); // can be optional <=> this commenting (noZoom) is necessary for 
                       // my current tooltip implementation to work: reason = right now zoom blocks clickevents
   }
 
@@ -90,7 +89,7 @@ class Plot {
        var tooltip = this.svg
         .append('g')
         .append('circle')
-          .style("fill", "none")
+          .style("fill", "red")
           .attr("stroke", "black")
           .attr('r', 8.5)
           .style("opacity", 0);
@@ -114,18 +113,37 @@ class Plot {
       var data = this.curr_data1;
 
       this.mousemove= function() {
-        //console.log(d3.mouse(this));
+        d3.event.preventDefault();
+        // const ym = y1.invert(d3.event.layerY);
+        // const xm = x1.invert(d3.event.layerX);
+        
+        var xm = x1.invert(d3.mouse(this)[0]);
+        var ym = y1.invert(d3.mouse(this)[1]);
+        // console.log(xm,ym);
+        console.log(xm,ym);
+        // console.log(x1(xm),y1(ym));
+        // const i1 = d3.bisectLeft(data.dates, xm, 1);
+        // const i0 = i1 - 1;
+        // const i = xm - data.dates[i0] > data.dates[i1] - xm ? i1 : i0;
+        // const s = data.series.reduce((a, b) => Math.abs(a.values[i] - ym) < Math.abs(b.values[i] - ym) ? a : b);
+        // path.attr("stroke", d => d === s ? null : "#ddd").filter(d => d === s).raise();
+        // dot.attr("transform", `translate(${x(data.dates[i])},${y(s.values[i])})`);
+        // dot.select("text").text(s.name);
+
+
         tooltip
             // .style("left", (d3.mouse(this)[0]+70) + "px")
             // .style("top", (d3.mouse(this)[1]) + "px")
-            .attr("cx", d3.mouse(this)[0])
-            .attr("cy", d3.mouse(this)[1])
+            // .attr("cx", d3.mouse(this)[0])
+            // .attr("cy", d3.mouse(this)[1])
+            .attr("transform", `translate(${x1(xm)},${y1(ym)})`);
         tooltipText
           .html("Some useful stuff")
           // .style("left", (d3.mouse(this)[0]) + "px")
           // .style("top", (d3.mouse(this)[1]) + "px")
-          .attr("x", d3.mouse(this)[0])
-          .attr("y", d3.mouse(this)[1])
+          //.attr("x", d3.mouse(this)[0])
+          //.attr("y", d3.mouse(this)[1])
+          .attr("transform", `translate(${x1(xm)},${y1(ym)})`);
         }
 
       this.mouseleave= function() {
@@ -354,6 +372,8 @@ class Plot {
     this.createYScaleAxis();    
     this.createBrush();
     this.createZoom();
+
+    this.createToolTip();
 
     // Remain zoomed
     if(this.zoomed_flag == 1){
