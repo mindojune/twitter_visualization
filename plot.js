@@ -4,10 +4,10 @@
 // Idea 1: Combine them inside the model... and give them two diff thems.
 // Idea 2: Two separate streams ==> seems more straightfoward why not? => x axis and stuff
 // TODO 2: Idea for Bottom Aggregate Visualization
-// TODO 3: Some major refactoring due
+// TODO 3: Make Intelligent Tooltipping work
 
 class Plot {
-  constructor(curr_data1) {
+  constructor(curr_data1, model) {
       this.svg = d3.selectAll("svg");
 
       this.margin  = {top: 20, bottom: 110, right: 20,  left: 80};
@@ -25,6 +25,10 @@ class Plot {
       // Ignore those but don't delete
       this.zoomed_flag = 0;
       this.brushed_flag = 0;
+
+      this.model = model;
+      this.displaying = "replies";
+      // "retweets", "likes", "total", "ratio"
   } 
 
   draw() {
@@ -118,6 +122,14 @@ class Plot {
             const date = d3.timeFormat("%Y-%m-%d")(xm);
             
             $this.selected_date = date;
+            var res = $this.getTopTweet(date);
+
+            var topTweeterMAGA = res[0][0];
+            var topTweeterMETOO = res[1][0];            
+            var topTweetMAGA = res[0][1];
+            var topTweetMETOO = res[1][1];
+
+                        
 
             var xpos = d3.mouse(this)[0] ;
             var ypos = d3.mouse(this)[1] ;
@@ -138,15 +150,28 @@ class Plot {
             //         .style("left", xpos+10)     
             //         .style("top", ypos);   
 
-            tooltip.html("Data on " + date)
-                .style('display', 'block')
-                .attr("x", xpos+10)
-                .attr("y", ypos)
-                .attr("font-family", "noto")
-                .attr("font-size", "20px")
-                .append('div')
-                .style('color', "red")
-                ;
+            console.log("METOO TOP TWEET", topTweetMETOO, "by", topTweeterMETOO);
+            console.log("MAGA TOP TWEET", topTweetMAGA, "by", topTweeterMAGA);
+
+            // tooltip.html(date+"\'s top Tweet: "+ topTweeterMAGA)
+            //     .style('display', 'block')
+            //     .attr("x", xpos+10)
+            //     .attr("y", ypos)
+            //     .attr("font-family", "noto")
+            //     .attr("font-size", "10px")
+            //     .append('div')
+            //     .style('color', "red")
+            //     ;
+
+            // tooltip.html(date+"\'s top Tweet: "+ topTweeterMETOO)
+            //     .style('display', 'block')
+            //     .attr("x", xpos+10)
+            //     .attr("y", ypos+40)
+            //     .attr("font-family", "noto")
+            //     .attr("font-size", "10px")
+            //     .append('div')
+            //     .style('color', "red")
+            //     ;    
 
     }
 
@@ -319,6 +344,36 @@ class Plot {
     this.zoomed_flag = 1;
   }
 
+  getTopTweet(date){
+    // console.log(this.displaying);
+    // console.log(date);
+    var content1, content2, tweeter1, tweeter2;
+    var res;
+    var MAGA, METOO;
+    if (this.displaying == "replies"){
+        res = this.model.sortByReplies(date);
+    }
+    else if(this.displaying == "retweets"){
+        res = this.model.sortByRetweets(date);
+    }
+    else if(this.displaying == "likes"){
+        res = this.model.sortByLikes(date);
+    }
+    else if(this.displaying == "total"){
+        res = this.model.sortByTotal(date);
+    }
+    else if(this.displaying == "ratio"){
+        res = this.model.sortByRatio(date);
+        //res = this.model.sortByAverageRatio(date);
+    }
+    MAGA = res[0];
+    METOO = res[1];
+    content1 = MAGA[0].content;
+    tweeter1 = MAGA[0].tweeter;
+    content2 = METOO[0].content;
+    tweeter2 = METOO[0].tweeter;
+    return [[tweeter1, content1], [tweeter2, content2] ];
+  }
 
  // Update data section: the order of the functions calls are important
  update(new_data) {
@@ -410,7 +465,7 @@ model.loadData()
     var repliesByDate = model.getRepliesByDate();
     var curr_data1 = repliesByDate;
 
-    time_plot = new Plot(curr_data1);
+    time_plot = new Plot(curr_data1, model);
     time_plot.draw();
 
 
@@ -432,24 +487,33 @@ d3.select('#show-total').on('click', showTotal);
 function showReplies() {
   var new_data = model.getRepliesByDate();
   time_plot.update(new_data);
+  time_plot.displaying = "replies";
+
   return;
 }
 
 function showRetweets() {
   var new_data = model.getRetweetsByDate();
   time_plot.update(new_data);
+
+  time_plot.displaying = "retweets";
+
   return;
 }
 
 function showLikes() {
   var new_data = model.getLikesByDate();
   time_plot.update(new_data);
+  
+  time_plot.displaying = "likes";
   return;
 }
 
 function showAverageRatio() {
   var new_data = model.getAverageRatioByDate();
   time_plot.update(new_data);
+
+  time_plot.displaying = "ratio";
   return;
 }
 
@@ -457,12 +521,16 @@ function showAverageRatio() {
 function showAggregateRatio() {
   var new_data = model.getAggregateRatioByDate();
   time_plot.update(new_data);
+
+  time_plot.displaying = "ratio";
   return;
 }
 
 function showTotal() {
   var new_data = model.getTotalByDate();
   time_plot.update(new_data);
+
+  time_plot.displaying = "total";
   return;
 }
 

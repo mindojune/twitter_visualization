@@ -48,22 +48,94 @@ class Model {
   //   return sorted_by_replies;
   // }
 
-  sortByLikes(date){
+  getDateTweet(date, dataset){
     var tweetsByDate = d3.nest()
       .key(function(d) { return d.date; })
-      .entries(this.data1);
+      .entries(dataset);
 
-    var tweetsBy_date = tweetsByDate.filter(function(METOO){
-          //console.log(METOO.key);
+    var tweetsByDate = tweetsByDate.filter(function(METOO){
           return METOO.key == date;
     });
-    tweetsBy_date = tweetsBy_date[0].values;
+    return tweetsByDate;
+  }
 
-    var sorted_by_like = tweetsBy_date.sort(function(x, y){
+  sortByLikes(date){
+    var MAGAtweets = this.getDateTweet(date,this.data1)[0].values;
+    var METOOtweets = this.getDateTweet(date,this.data2)[0].values;
+
+    var MAGAsorted  = MAGAtweets.sort(function(x, y){
         return d3.descending(x.likes, y.likes);
     });
-    return sorted_by_like;
+    var METOOsorted = METOOtweets.sort(function(x, y){
+        return d3.descending(x.likes, y.likes);
+    });
+
+    //console.log(MAGAsorted, METOOsorted);
+    return [MAGAsorted, METOOsorted];
   }
+
+  sortByReplies(date){
+    var MAGAtweets = this.getDateTweet(date,this.data1)[0].values;
+    var METOOtweets = this.getDateTweet(date,this.data2)[0].values;
+
+    var MAGAsorted  = MAGAtweets.sort(function(x, y){
+        return d3.descending(x.replies, y.replies);
+    });
+    var METOOsorted = METOOtweets.sort(function(x, y){
+        return d3.descending(x.replies, y.replies);
+    });
+
+    //console.log(MAGAsorted, METOOsorted);
+    return [MAGAsorted, METOOsorted];
+  }
+
+
+  sortByRetweets(date){
+    var MAGAtweets = this.getDateTweet(date,this.data1)[0].values;
+    var METOOtweets = this.getDateTweet(date,this.data2)[0].values;
+
+    var MAGAsorted  = MAGAtweets.sort(function(x, y){
+        return d3.descending(x.retweets, y.retweets);
+    });
+    var METOOsorted = METOOtweets.sort(function(x, y){
+        return d3.descending(x.retweets, y.retweets);
+    });
+
+    //console.log(MAGAsorted, METOOsorted);
+    return [MAGAsorted, METOOsorted];
+  }
+
+  sortByTotal(date){
+    var MAGAtweets = this.getDateTweet(date,this.data1)[0].values;
+    var METOOtweets = this.getDateTweet(date,this.data2)[0].values;
+
+    var MAGAsorted  = MAGAtweets.sort(function(x, y){
+        return d3.descending(x.replies+x.retweets+x.likes, y.replies+y.retweets+y.likes);
+    });
+    var METOOsorted = METOOtweets.sort(function(x, y){
+        return d3.descending(x.replies+x.retweets+x.likes, y.replies+y.retweets+y.likes);
+    });
+
+    //console.log(MAGAsorted, METOOsorted);
+    return [MAGAsorted, METOOsorted];
+  }
+
+  sortByRatio(date){
+    var MAGAtweets = this.getDateTweet(date,this.data1)[0].values;
+    var METOOtweets = this.getDateTweet(date,this.data2)[0].values;
+
+    var MAGAsorted  = MAGAtweets.sort(function(x, y){
+        return d3.descending(x.replies/(x.likes+x.retweets), y.replies/(y.likes+y.retweets));
+    });
+    var METOOsorted = METOOtweets.sort(function(x, y){
+        return d3.descending(x.replies/(x.likes+x.retweets), y.replies/(y.likes+y.retweets));
+    });
+
+    //console.log(MAGAsorted, METOOsorted);
+    return [MAGAsorted, METOOsorted];
+  }
+
+
 
 
   // TODO: Rightnow METOO date is clipped to MAGA's?
