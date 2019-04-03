@@ -22,15 +22,14 @@ class Plot {
 
 
       this.zoomed_flag = 0;
+      this.brushed_flag = 0;
   } 
 
   draw() {
     this.createXScaleAxis();
     this.createYScaleAxis();    
     this.createBrush();
-    this.createZoom(); // can be optional
-
-
+    //this.createZoom(); // can be optional
 
     this.drawFocus();
     this.drawContext();
@@ -42,10 +41,9 @@ class Plot {
     this.drawAxisX();
     this.drawAxisY();    
 
-
     this.addClip();
     this.addBrush();
-    this.addZoom(); // can be optional <=> this commenting (noZoom) is necessary for 
+    //this.addZoom(); // can be optional <=> this commenting (noZoom) is necessary for 
                       // my current tooltip implementation to work: reason = right now zoom blocks clickevents
   }
 
@@ -172,54 +170,7 @@ class Plot {
 
 
   drawLine1(){
-      // var tooltip = this.svg
-      //   .append('g')
-      //   .append('circle')
-      //     .style("fill", "none")
-      //     .attr("stroke", "black")
-      //     .attr('r', 8.5)
-      //     .style("opacity", 0);
-
-      // // Create the text that travels along the curve of chart
-      // var tooltipText = this.svg
-      //   .append('g')
-      //   .append('text')
-      //     .style("opacity", 0)
-      //     .attr("text-anchor", "left")
-      //     .attr("alignment-baseline", "middle");
-
-      // var mouseover = function() {
-      //   tooltip.style("opacity", 1)
-      //   tooltipText.style("opacity",1)
-      // }
-
-      // var x1 = this.x1;
-      // var y1 = this.y1;
-      // var bisect = d3.bisector(function(d) { return d.x; }).left;
-      // var data = this.curr_data1;
-
-      // var mousemove= function() {
-      //   //console.log(d3.mouse(this));
-      //   tooltip
-      //       // .style("left", (d3.mouse(this)[0]+70) + "px")
-      //       // .style("top", (d3.mouse(this)[1]) + "px")
-      //       .attr("cx", d3.mouse(this)[0])
-      //       .attr("cy", d3.mouse(this)[1])
-      //   tooltipText
-      //     .html("Some useful stuff")
-      //     // .style("left", (d3.mouse(this)[0]) + "px")
-      //     // .style("top", (d3.mouse(this)[1]) + "px")
-      //     .attr("x", d3.mouse(this)[0])
-      //     .attr("y", d3.mouse(this)[1])
-      //   }
-
-      // var mouseleave= function() {
-      //   tooltip.style("opacity", 0)
-      //   tooltipText.style("opacity", 0)
-      // }
-
-    //////////
-
+     
     var $this = this;
 
     this.line1MAGA = d3.line()
@@ -336,24 +287,25 @@ class Plot {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
   this.s = d3.event.selection || this.x2.range();
   this.x1.domain(this.s.map(this.x2.invert, this.x2));
-  this.focus.select(".line1MAGA").attr("d", this.line1MAGA(this.curr_data1));
-  this.focus.select(".line1METOO").attr("d", this.line1METOO(this.curr_data1));
-  this.focus.select(".xaxis1").call(this.xAxis1);
+  this.focus.selectAll(".line1MAGA").attr("d", this.line1MAGA(this.curr_data1));
+  this.focus.selectAll(".line1METOO").attr("d", this.line1METOO(this.curr_data1));
+  this.focus.selectAll(".xaxis1").call(this.xAxis1);
 
   // Fix here
-  this.svg.select(".zoom").call(this.zoom.transform, d3.zoomIdentity
-      .scale(this.width / (this.s[1] - this.s[0]))
-      .translate(-this.s[0], 0));
+  // this.svg.selectAll(".zoom").call(this.zoom.transform, d3.zoomIdentity
+  //     .scale(this.width / (this.s[1] - this.s[0]))
+  //     .translate(-this.s[0], 0));
+  this.brushed_flag = 1;
   }
 
   zoomed(){
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
     this.t = d3.event.transform;
     this.x1.domain(this.t.rescaleX(this.x2).domain());
-    this.focus.select(".line1MAGA").attr("d", this.line1MAGA(this.curr_data1));
-     this.focus.select(".line1METOO").attr("d", this.line1METOO(this.curr_data1));
-    this.focus.select(".xaxis1").call(this.xAxis1);
-    this.context.select(".brush").call(this.brush.move, this.x1.range().map(this.t.invertX, this.t));
+    this.focus.selectAll(".line1MAGA").attr("d", this.line1MAGA(this.curr_data1));
+     this.focus.selectAll(".line1METOO").attr("d", this.line1METOO(this.curr_data1));
+    this.focus.selectAll(".xaxis1").call(this.xAxis1);
+    this.context.selectAll(".brush").call(this.brush.move, this.x1.range().map(this.t.invertX, this.t));
     //context.select(".brush").call(brush.move, [x(60), x(120)]);
     this.zoomed_flag = 1;
   }
@@ -371,13 +323,17 @@ class Plot {
     this.createXScaleAxis();
     this.createYScaleAxis();    
     this.createBrush();
-    this.createZoom();
+    //this.createZoom();
 
     this.createToolTip();
 
     // Remain zoomed
     if(this.zoomed_flag == 1){
       this.x1.domain(this.t.rescaleX(this.x2).domain());
+    }
+
+    if(this.brushed_flag == 1){
+      this.x1.domain(this.s.map(this.x2.invert, this.x2));
     }
 
     // Select the section we want to apply our changes to
