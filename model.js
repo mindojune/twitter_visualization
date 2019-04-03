@@ -48,7 +48,7 @@ class Model {
   //   return sorted_by_replies;
   // }
 
-  sortByLike(date){
+  sortByLikes(date){
     var tweetsByDate = d3.nest()
       .key(function(d) { return d.date; })
       .entries(this.data1);
