@@ -54,7 +54,7 @@
       }
     }
 
-    function makeUpset(sets, names, title) { // names: [[],[]]
+    function makeUpset(sets, names, title, color) { // names: [[],[]]
       //number of circles to make
       var numCircles = sets.length
       var numSets = sets.length
@@ -247,7 +247,7 @@
               //.attr("x", function(d){ 1 + d.names.length; })
               .attr("x", function(d,i){ return (rad-1) + i * (rad*2.7); })
               .attr("y", function(d){ return yrange(d.names.length); })             
-              .style('fill', "darkslategrey")
+              .style('fill', color)
               .attr('height',function(d){ return height - yrange(d.names.length); });
 
       //circles
@@ -261,9 +261,9 @@
             .style("opacity", 1)
             .attr("fill", function() {
               if (data[i].set.indexOf(j.toString()) != -1) {
-                return "darkslategrey"
+                return color;
               } else {
-                return "silver"
+                return "silver";
               }
             })
           
@@ -276,7 +276,7 @@
             .attr("y1", data[i].set.substring(0, 1) * (rad*2.7))
             .attr("x2", i * (rad*2.7))
             .attr("y2", data[i].set.substring(data[i].set.length - 1, data[i].set.length) * (rad*2.7))
-            .style("stroke", "darkslategrey")
+            .style("stroke", color)
             .attr("stroke-width", 4)
           
         }

@@ -414,16 +414,19 @@ class Plot {
 
     var title = this.start_end[0].toString().slice(0,15) + " - " + this.start_end[1].toString().slice(0,15);
     var filename;
+    var color;
 
     console.log("Warq", maga);
 
     if(maga){
       filename = 'data/clean_maga_011518_041418.json'
       title = title + " #MAGA Tweets Hasntag Breakdown";
+      color = "red";
     }
     else{
       filename = 'data/clean_metoo_011518_041418.json'
       title = title + " #METOO Tweets Hasntag Breakdown";
+      color = "steelblue";
     }
 
     d3.json(filename,(d) => {
@@ -461,7 +464,7 @@ class Plot {
             });
             names.push(idList);
         });
-        makeUpset(sets,names, title);
+        makeUpset(sets,names, title, color);
     });
 
 
