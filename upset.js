@@ -54,7 +54,7 @@
       }
     }
 
-    function makeUpset(sets, names) { // names: [[],[]]
+    function makeUpset(sets, names, title) { // names: [[],[]]
       //number of circles to make
       var numCircles = sets.length
       var numSets = sets.length
@@ -66,12 +66,14 @@
         bottom: 100,
         left: 100
       };
-      var width = 600;
-      var height=500;
+      var width = 800;
+      var height= 500;
       
+      venn = d3.selectAll("#venn").selectAll("svg") ;
+      venn.remove();
 
       // make the canvas
-      var svg = d3.select("#venn") 
+      var svg = d3.select("#venn")
           .append("svg")
               .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
@@ -88,7 +90,7 @@
         .attr("fill","black")
         .style("font-size", "20px")
         .attr("transform", "translate("+ (width/2) +","+ -20 +")")
-        .text("Hash Tags");
+        .text(title);
 
          // make a group for the upset circle intersection things
       var upsetCircles = svg.append("g")
@@ -282,7 +284,7 @@
     }
 
 
-    
+
 
     // makeUpset(sets,names);
     // change date to date range later

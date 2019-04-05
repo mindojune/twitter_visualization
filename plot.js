@@ -113,10 +113,10 @@ class Plot {
     //const tooltip = this.focus.append('text'); //.attr("class", "tooltip").style("opacity", 1);
     const tooltipLine = this.focus.append('line');
 
-      var x1 = this.x1;
-      var y1 = this.y1;
+    var x1 = this.x1;
+    var y1 = this.y1;
 
-     this.removeTooltip = function() {
+    this.removeTooltip = function() {
           if (tooltip1) 
             //tooltip.style("display", "none");
             tooltip1.style("visibility", "hidden");
@@ -348,6 +348,9 @@ class Plot {
   //     .scale(this.width / (this.s[1] - this.s[0]))
   //     .translate(-this.s[0], 0));
   this.brushed_flag = 1;
+
+  // For updating drawUpset
+  //this.drawUpset();
   }
 
   zoomed(){
@@ -397,12 +400,23 @@ class Plot {
     // makeUpset(sets,names);
     // change date to date range later
     var filename = 'data/clean_maga_011518_041418.json'
-    var date = '2018-04-04'
-    // function loadData(filename,date) {
+    //var date = '2018-04-04'
+    //var title = this.start_end[0].toString().slice(0,17) + " - " + this.start_end[1].toString().slice(0,17);
+    
+    var title = this.start_end[0].toString().slice(0,15) + " - " + this.start_end[1].toString().slice(0,15);
+    title = title + " Hasntag Breakdown";
+    // var filter_date = this.selected_date;
+
+    // if(this.selected_date == -1) filter_date = '2018-04-04';
+    // var title = filter_date;
+
     d3.json(filename,(d) => {
         var dat = d;
             // filter by date first then
-        var fltrdData = dat.filter((d) => d.date==date);
+        var fltrdData = dat.filter((d) => this.parseDate(d.date)>=this.start_end[0] && this.parseDate(d.date) <= this.start_end[1]);
+        
+        //var fltrdData = dat.filter((d) => d.date == this.selected_date);
+        
         var allHts = [];
         var htCounter = {};
         fltrdData.forEach((item) => {
@@ -431,7 +445,7 @@ class Plot {
             });
             names.push(idList);
         });
-        makeUpset(sets,names);
+        makeUpset(sets,names, title);
     });
 
 
@@ -508,9 +522,12 @@ class Plot {
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
-             .attr("d", this.line2METOO(this.curr_data1));       
+             .attr("d", this.line2METOO(this.curr_data1));      
+
+    //this.drawUpset(); 
   } 
 
+  
 }
 
 
@@ -531,9 +548,6 @@ model.loadData()
     time_plot.draw();
 
 
-    //debugging
-    model.sortByLikes("2018-03-15");
-
 });
 
 d3.select('.controls').on('click', function() {
@@ -545,6 +559,7 @@ d3.select('#show-retweets').on('click', showRetweets);
 d3.select('#show-likes').on('click', showLikes);
 d3.select('#show-ratio').on('click', showAggregateRatio);
 d3.select('#show-total').on('click', showTotal);
+d3.select('#show-hb').on('click', updateUpset);
 
 function showReplies() {
   var new_data = model.getRepliesByDate();
@@ -593,6 +608,15 @@ function showTotal() {
   time_plot.update(new_data);
 
   time_plot.displaying = "total";
+  return;
+}
+
+function updateUpset() {
+  // var new_data = model.getTotalByDate();
+  // time_plot.update(new_data);
+
+  // time_plot.displaying = "total";
+  time_plot.drawUpset();
   return;
 }
 
