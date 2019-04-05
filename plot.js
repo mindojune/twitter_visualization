@@ -18,8 +18,8 @@ class Plot {
       // this.height2 = +this.svg.attr("height")/(2) - this.margin2.top - this.margin2.bottom; // 40
       // this.height3 = +this.svg.attr("height") -this.margin3.top - this.margin3.bottom ; // 40
       
-      this.margin = {top: 20, right: 20, bottom: 110, left: 40},
-      this.margin2 = {top: 430, right: 20, bottom: 30, left: 40},
+      this.margin  = {top: 20, bottom: 110, right: 20,  left: 80};
+      this.margin2 = {top: 430, bottom: 30, right: 20,  left: 80};
       this.width = + this.svg.attr("width") -  this.margin.left - this.margin.right,
       this.height = + this.svg.attr("height") - this.margin.top - this.margin.bottom,
       this.height2 = + this.svg.attr("height") - this.margin2.top - this.margin2.bottom;
@@ -60,6 +60,8 @@ class Plot {
     this.addBrush();
     //this.addZoom(); // can be optional <=> this commenting (noZoom) is necessary for 
                       // my current tooltip implementation to work: reason = right now zoom blocks clickevents
+
+    this.drawUpset();
   }
 
   drawLegend(){
@@ -339,6 +341,8 @@ class Plot {
   this.focus.selectAll(".line1METOO").attr("d", this.line1METOO(this.curr_data1));
   this.focus.selectAll(".xaxis1").call(this.xAxis1);
 
+  this.start_end =  this.s.map(this.x2.invert, this.x2);
+
   // Fix here
   // this.svg.selectAll(".zoom").call(this.zoom.transform, d3.zoomIdentity
   //     .scale(this.width / (this.s[1] - this.s[0]))
@@ -387,6 +391,50 @@ class Plot {
     content2 = METOO[0].content;
     tweeter2 = METOO[0].tweeter;
     return [[tweeter1, content1], [tweeter2, content2] ];
+  }
+
+  drawUpset() {
+    // makeUpset(sets,names);
+    // change date to date range later
+    var filename = 'data/clean_maga_011518_041418.json'
+    var date = '2018-04-04'
+    // function loadData(filename,date) {
+    d3.json(filename,(d) => {
+        var dat = d;
+            // filter by date first then
+        var fltrdData = dat.filter((d) => d.date==date);
+        var allHts = [];
+        var htCounter = {};
+        fltrdData.forEach((item) => {
+            allHts = allHts.concat(item.hashtags);
+        });
+        allHts.forEach((ht) => {
+            if (!(ht in htCounter)) {
+                htCounter[ht] = 1
+            } else {
+                htCounter[ht] += 1
+            }
+        });
+        // sets = [array of 5 most common hashtags]
+        var setsAll = Object.keys(htCounter).sort(function(a,b) {
+            return htCounter[b]-htCounter[a]
+        });
+        var sets = setsAll.slice(0,5);
+        // names = [for ht in sets, array of all tweet ids with ht in ht]
+        var names = [];
+        sets.forEach ((ht) => {
+            var idList = [];
+            fltrdData.forEach((item) => {
+                if (item.hashtags.includes(ht)) {
+                    idList.push(item.id)
+                }
+            });
+            names.push(idList);
+        });
+        makeUpset(sets,names);
+    });
+
+
   }
 
  // Update data section: the order of the functions calls are important
