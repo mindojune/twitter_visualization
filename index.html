@@ -16,8 +16,9 @@
   <!-- <script src="https://d3js.org/d3-scale-chromatic.v1.min.js" defer></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
   <script src="model.js" defer></script>
-  <!--   <script src="time.js" defer></script> -->
   <script src="plot.js" defer></script>
+  <!-- For Upset Plot -->
+  <script src="upset.js" defer></script>
 </head>
 <body>
   <main>
@@ -38,9 +39,12 @@
       </div> 
       <div text-align="center">
         <!-- <svg id= "time_series1" width="960" height="500"></svg> -->
-        <svg id= "time_series1" width="960" height="1000"></svg>
+        <svg id= "time_series1" width="960" height="500"></svg>
         <!-- <div id='tooltip' style='position:absolute;background-color:lightgray;padding:5px'></div> -->
       </div>
+      <!-- For Upset Plots -->
+      <div id="venn"></div>
+      <div id="chart2"></div>
     </section>
   </main>
 </body>

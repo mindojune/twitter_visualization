@@ -8,15 +8,22 @@
 
 class Plot {
   constructor(curr_data1, model) {
-      this.svg = d3.selectAll("svg");
+      this.svg = d3.select("#time_series1");
 
-      this.margin  = {top: 20, bottom: 110, right: 20,  left: 80};
-      this.margin2 = {top: 430, bottom: 30, right: 20,  left: 80};
-      this.margin3 = {top: 430, bottom: 30, right: 20,  left: 80};
-      this.width = +this.svg.attr("width") - this.margin.left - this.margin.right;      // 900
-      this.height = +this.svg.attr("height")/(2) - this.margin.top - this.margin.bottom;    // 370
-      this.height2 = +this.svg.attr("height")/(2) - this.margin2.top - this.margin2.bottom; // 40
-      this.height3 = +this.svg.attr("height") -this.margin3.top - this.margin3.bottom ; // 40
+      // this.margin  = {top: 20, bottom: 110, right: 20,  left: 80};
+      // this.margin2 = {top: 430, bottom: 30, right: 20,  left: 80};
+      // this.margin3 = {top: 430, bottom: 30, right: 20,  left: 80};
+      // this.width = +this.svg.attr("width") - this.margin.left - this.margin.right;      // 900
+      // this.height = +this.svg.attr("height")/(2) - this.margin.top - this.margin.bottom;    // 370
+      // this.height2 = +this.svg.attr("height")/(2) - this.margin2.top - this.margin2.bottom; // 40
+      // this.height3 = +this.svg.attr("height") -this.margin3.top - this.margin3.bottom ; // 40
+      
+      this.margin = {top: 20, right: 20, bottom: 110, left: 40},
+      this.margin2 = {top: 430, right: 20, bottom: 30, left: 40},
+      this.width = + this.svg.attr("width") -  this.margin.left - this.margin.right,
+      this.height = + this.svg.attr("height") - this.margin.top - this.margin.bottom,
+      this.height2 = + this.svg.attr("height") - this.margin2.top - this.margin2.bottom;
+      
       this.parseDate = d3.timeParse("%Y-%m-%d");
       
       this.curr_data1 = curr_data1;
@@ -409,7 +416,7 @@ class Plot {
     }
 
     // Select the section we want to apply our changes to
-    var svg = d3.selectAll('svg').transition();
+    var svg = d3.select('#time_series1').transition();
     var focus = this.svg.selectAll(".focus").transition();
     var context = this.svg.selectAll(".context").transition();
 
