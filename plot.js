@@ -36,6 +36,8 @@ class Plot {
       this.model = model;
       this.displaying = "replies";
       // "retweets", "likes", "total", "ratio"
+
+      //this.upsetMAGA = true;
   } 
 
   draw() {
@@ -61,7 +63,7 @@ class Plot {
     //this.addZoom(); // can be optional <=> this commenting (noZoom) is necessary for 
                       // my current tooltip implementation to work: reason = right now zoom blocks clickevents
 
-    this.drawUpset();
+    this.drawUpset(true);
   }
 
   drawLegend(){
@@ -396,19 +398,33 @@ class Plot {
     return [[tweeter1, content1], [tweeter2, content2] ];
   }
 
-  drawUpset() {
+  drawUpset(maga) {
     // makeUpset(sets,names);
     // change date to date range later
-    var filename = 'data/clean_maga_011518_041418.json'
+    
     //var date = '2018-04-04'
     //var title = this.start_end[0].toString().slice(0,17) + " - " + this.start_end[1].toString().slice(0,17);
     
-    var title = this.start_end[0].toString().slice(0,15) + " - " + this.start_end[1].toString().slice(0,15);
-    title = title + " Hasntag Breakdown";
+
     // var filter_date = this.selected_date;
 
     // if(this.selected_date == -1) filter_date = '2018-04-04';
     // var title = filter_date;
+
+
+    var title = this.start_end[0].toString().slice(0,15) + " - " + this.start_end[1].toString().slice(0,15);
+    var filename;
+
+    console.log("Warq", maga);
+
+    if(maga){
+      filename = 'data/clean_maga_011518_041418.json'
+      title = title + " #MAGA Tweets Hasntag Breakdown";
+    }
+    else{
+      filename = 'data/clean_metoo_011518_041418.json'
+      title = title + " #METOO Tweets Hasntag Breakdown";
+    }
 
     d3.json(filename,(d) => {
         var dat = d;
@@ -559,7 +575,8 @@ d3.select('#show-retweets').on('click', showRetweets);
 d3.select('#show-likes').on('click', showLikes);
 d3.select('#show-ratio').on('click', showAggregateRatio);
 d3.select('#show-total').on('click', showTotal);
-d3.select('#show-hb').on('click', updateUpset);
+d3.select('#show-hbMAGA').on('click', updateUpsetMAGA);
+d3.select('#show-hbMETOO').on('click', updateUpsetMETOO);
 
 function showReplies() {
   var new_data = model.getRepliesByDate();
@@ -611,14 +628,17 @@ function showTotal() {
   return;
 }
 
-function updateUpset() {
-  // var new_data = model.getTotalByDate();
-  // time_plot.update(new_data);
-
-  // time_plot.displaying = "total";
-  time_plot.drawUpset();
+function updateUpsetMAGA() {
+  time_plot.drawUpset(true);
   return;
 }
+
+function updateUpsetMETOO() {
+  time_plot.drawUpset(false);
+  return;
+}
+
+
 
 
 
