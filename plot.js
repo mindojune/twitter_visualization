@@ -1,10 +1,6 @@
 'use strict';
 
-// TODO 1: Showing 2 plots
-// Idea 1: Combine them inside the model... and give them two diff thems.
-// Idea 2: Two separate streams ==> seems more straightfoward why not? => x axis and stuff
-// TODO 2: Idea for Bottom Aggregate Visualization
-// TODO 3: Make Intelligent Tooltipping work
+// TODO 1: Aligning
 
 class Plot {
   constructor(curr_data1, model) {
@@ -416,16 +412,15 @@ class Plot {
     var filename;
     var color;
 
-    console.log("Warq", maga);
 
     if(maga){
       filename = 'data/clean_maga_011518_041418.json'
-      title = title + " #MAGA Tweets Hasntag Breakdown";
+      title = title + " #MAGA Tweets Hashtag Breakdown";
       color = "red";
     }
     else{
       filename = 'data/clean_metoo_011518_041418.json'
-      title = title + " #METOO Tweets Hasntag Breakdown";
+      title = title + " #METOO Tweets Hashtag Breakdown";
       color = "steelblue";
     }
 
@@ -441,6 +436,10 @@ class Plot {
         fltrdData.forEach((item) => {
             allHts = allHts.concat(item.hashtags);
         });
+
+        // Filtering "" results: Is doing this necessary or truthful?
+        allHts = allHts.filter((d) => d !== "");
+
         allHts.forEach((ht) => {
             if (!(ht in htCounter)) {
                 htCounter[ht] = 1
@@ -448,11 +447,13 @@ class Plot {
                 htCounter[ht] += 1
             }
         });
-        // sets = [array of 5 most common hashtags]
+
         var setsAll = Object.keys(htCounter).sort(function(a,b) {
             return htCounter[b]-htCounter[a]
         });
-        var sets = setsAll.slice(0,5);
+        //var sets = setsAll.slice(0,5);
+        var sets = setsAll.slice(1,6);
+
         // names = [for ht in sets, array of all tweet ids with ht in ht]
         var names = [];
         sets.forEach ((ht) => {
