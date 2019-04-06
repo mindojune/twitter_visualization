@@ -104,6 +104,27 @@ class Plot {
       .on("zoom", this.zoomed.bind(this));
   }
 
+  static textProcess(original){
+    var words = original.split(" ");
+    var new_string = "";
+
+    for (var i = 0; i < words.length; i++) { 
+      if(words[i].length > 20){
+        //console.log(words[i].match(/.{1,10}/g));
+        var equal_length = words[i].match(/.{1,10}/g);
+        for (var j = 0; j < equal_length.length; j++) { 
+          new_string += equal_length[j] + " ";
+        }
+      }
+      else{
+        new_string += words[i] + " ";
+      }
+      
+    }
+
+    return new_string;
+  }
+
   createToolTip(){
     
     const tooltip1 = d3.select('body').append('div').attr("class", "tooltip1").style("opacity", 0.0);
@@ -143,9 +164,10 @@ class Plot {
             var res = $this.getTopTweet(date);
 
             var topTweeterMAGA = res[0][0];
-            var topTweeterMETOO = res[1][0];            
-            var topTweetMAGA = res[0][1];
-            var topTweetMETOO = res[1][1];   
+            var topTweeterMETOO = res[1][0];    
+
+            var topTweetMAGA = Plot.textProcess(res[0][1]);
+            var topTweetMETOO = Plot.textProcess(res[1][1]);   
 
             var xpos = d3.mouse(this)[0] ;
             var ypos = d3.mouse(this)[1] ;
@@ -466,6 +488,7 @@ class Plot {
             names.push(idList);
         });
         makeUpset(sets,names, title, color);
+        //updateUpset(sets,names, title, color);
     });
 
 
