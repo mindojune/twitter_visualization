@@ -1,6 +1,6 @@
 'use strict';
 
-// TODO 1: Aligning
+// TODO 1: Add Transition to Upset Graph
 
 class Plot {
   constructor(curr_data1, model) {
