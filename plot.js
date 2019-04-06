@@ -111,7 +111,7 @@ class Plot {
     for (var i = 0; i < words.length; i++) { 
       if(words[i].length > 20){
         //console.log(words[i].match(/.{1,10}/g));
-        var equal_length = words[i].match(/.{1,10}/g);
+        var equal_length = words[i].match(/.{1,15}/g);
         for (var j = 0; j < equal_length.length; j++) { 
           new_string += equal_length[j] + " ";
         }
