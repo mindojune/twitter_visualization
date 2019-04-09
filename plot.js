@@ -484,10 +484,13 @@ class Plot {
     // if(this.selected_date == -1) filter_date = '2018-04-04';
     // var title = filter_date;
 
+    var startTime, endTime;
+    startTime = new Date();
 
     var title = this.start_end[0].toString().slice(0,15) + " - " + this.start_end[1].toString().slice(0,15);
     var filename;
     var color;
+
 
 
     //if(maga){
@@ -592,7 +595,12 @@ class Plot {
         //updateUpset(sets,names, title, color);
     });
 
-
+    // endTime = new Date();
+    // var timeDiff = endTime - startTime; //in ms
+    // timeDiff /= 1000;
+    // var seconds = Math.round(timeDiff);
+    // console.log("Took " + seconds + " seconds");
+    // console.log(timeDiff);
   }
 
 
