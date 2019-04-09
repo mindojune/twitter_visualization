@@ -290,7 +290,10 @@
       }
     }
 
-
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 function updateUpset(sets, names, title, color, choose) { // names: [[],[]]
@@ -306,14 +309,14 @@ function updateUpset(sets, names, title, color, choose) { // names: [[],[]]
         bottom: 100,
         left: 100
       };
-      var width = 425 //800;
+      var width = 425; // 800
       var height= 500;
       
       venn = d3.selectAll(choose).selectAll("svg") ;
       venn.remove();
 
       // make the canvas
-      var svg = d3.selectAll(choose)
+      var svg = d3.selectAll(choose)//.select("svg").select("g");
           .append("svg")
               .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
@@ -333,14 +336,25 @@ function updateUpset(sets, names, title, color, choose) { // names: [[],[]]
         .style("font-size", "20px")
         .attr("transform", "translate("+ (width/2) +","+ -20 +")")
         .attr("class", "title")
-        .text(title);
+        .text(title)
+        //
+        .style("opacity", 0.0)
+        .transition()
+        .duration(750)
+        .style("opacity", 1.0)
+        //;;
 
          // make a group for the upset circle intersection things
       var upsetCircles = svg.append("g")
       .attr("id", "upsetCircles")
       .attr("class", "circle")
       .attr("transform", "translate(20," + (height-60) + ")")
-      
+      //   //
+      // .style("opacity", 0.0)
+      // .transition()
+      // .duration(750)
+      // .style("opacity", 1.0)
+      // //;
       
       var rad = 13,
       height = 400;
@@ -410,7 +424,13 @@ function updateUpset(sets, names, title, color, choose) { // names: [[],[]]
           .attr("fill", "black")
           .attr("class", "circletext")
           .style("font-size", 13)
-          .text(sets[i])
+          .text(sets[i])         
+           //
+          // .style("opacity", 0.0)
+          // .transition()
+          // .duration(750)
+          // .style("opacity", 1.0)
+          //;
       }
 
       // sort data decreasing
@@ -464,6 +484,12 @@ function updateUpset(sets, names, title, color, choose) { // names: [[],[]]
           .call(xAxis)
           .selectAll(".tick")
           .remove()
+          //
+          .style("opacity", 0.0)
+          .transition()
+          .duration(750)
+          .style("opacity", 1.0)
+          //
 
 
       // Add the Y Axis
@@ -475,7 +501,13 @@ function updateUpset(sets, names, title, color, choose) { // names: [[],[]]
           .call(yAxis)
           .selectAll("text")
           .attr("fill", "black")
-          .attr("stroke", "none");
+          .attr("stroke", "none")
+          //
+          .style("opacity", 0.0)
+          .transition()
+          .duration(750)
+          .style("opacity", 1.0)
+          //;
 
         
 
@@ -494,7 +526,14 @@ function updateUpset(sets, names, title, color, choose) { // names: [[],[]]
               .attr("x", function(d,i){ return (rad-1) + i * (rad*2.7); })
               .attr("y", function(d){ return yrange(d.names.length); })             
               .style('fill', color)
-              .attr('height',function(d){ return height - yrange(d.names.length); });
+              .attr('height',function(d){ return height - yrange(d.names.length); })
+              //
+              .style("opacity", 0.0)
+              .transition()
+              .duration(750)
+              .style("opacity", 1.0)
+              //
+              ;
 
       //circles
       for (var i = 0; i < data.length; i++) {

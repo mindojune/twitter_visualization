@@ -587,6 +587,7 @@ class Plot {
             });
             names.push(idList);
         });
+        //makeUpset(sets,names, titleMETOO, colorMETOO, "#venn1"); //
         makeUpset(sets,names, titleMETOO, colorMETOO, "#venn2");
         //updateUpset(sets,names, title, color);
     });
@@ -666,7 +667,7 @@ class Plot {
             });
             names.push(idList);
         });
-        makeUpset(sets,names, titleMAGA, colorMAGA, "#venn1");
+        updateUpset(sets,names, titleMAGA, colorMAGA, "#venn1");
         //updateUpset(sets,names, title, color);
     });
 
@@ -711,7 +712,8 @@ class Plot {
             });
             names.push(idList);
         });
-        makeUpset(sets,names, titleMETOO, colorMETOO, "#venn2");
+        //updateUpset(sets,names, titleMETOO, colorMETOO, "#venn1"); //
+        updateUpset(sets,names, titleMETOO, colorMETOO, "#venn2");
         //updateUpset(sets,names, title, color);
     });
 
