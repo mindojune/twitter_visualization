@@ -772,8 +772,8 @@ d3.select('#show-retweets').on('click', showRetweets);
 d3.select('#show-likes').on('click', showLikes);
 d3.select('#show-ratio').on('click', showAggregateRatio);
 d3.select('#show-total').on('click', showTotal);
-d3.select('#show-hbMAGA').on('click', updateUpsetMAGA);
-d3.select('#show-hbMETOO').on('click', updateUpsetMETOO);
+d3.select('#show-hb').on('click', updateUpsetMAGA);
+// d3.select('#show-hbMETOO').on('click', updateUpsetMETOO);
 
 function showReplies() {
   var new_data = model.getRepliesByDate();
