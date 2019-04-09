@@ -1,6 +1,6 @@
 'use strict';
 
-// TODO 1: Add Transition to Upset Graph
+// TODO 1: Add Transition to Upset Plot
 
 class Plot {
   constructor(curr_data1, model) {
@@ -59,7 +59,8 @@ class Plot {
     //this.addZoom(); // can be optional <=> this commenting (noZoom) is necessary for 
                       // my current tooltip implementation to work: reason = right now zoom blocks clickevents
 
-    this.drawUpset(true);
+    // true = MAGA default, false = METOO default
+    this.drawUpset(false);
   }
 
   drawLegend(){
@@ -435,18 +436,18 @@ class Plot {
     var color;
 
 
-    if(maga){
-      filename = 'data/clean_maga_011518_041418.json'
-      title = title + " #MAGA Tweets Hashtag Breakdown";
-      color = "red";
-    }
-    else{
-      filename = 'data/clean_metoo_011518_041418.json'
-      title = title + " #METOO Tweets Hashtag Breakdown";
-      color = "steelblue";
-    }
+    //if(maga){
+      var filenameMAGA = 'data/clean_maga_011518_041418.json'
+      var titleMAGA = title + " #MAGA Tweets";
+      var colorMAGA = "red";
+    //}
+    //else{
+      var filenameMETOO = 'data/clean_metoo_011518_041418.json'
+      var titleMETOO = title + " #METOO Tweets";
+      var colorMETOO = "steelblue";
+    //}
 
-    d3.json(filename,(d) => {
+    d3.json(filenameMAGA,(d) => {
         var dat = d;
             // filter by date first then
         var fltrdData = dat.filter((d) => this.parseDate(d.date)>=this.start_end[0] && this.parseDate(d.date) <= this.start_end[1]);
@@ -487,7 +488,176 @@ class Plot {
             });
             names.push(idList);
         });
-        makeUpset(sets,names, title, color);
+        makeUpset(sets,names, titleMAGA, colorMAGA, "#venn1");
+        //updateUpset(sets,names, title, color);
+    });
+
+    d3.json(filenameMETOO,(d) => {
+        var dat = d;
+            // filter by date first then
+        var fltrdData = dat.filter((d) => this.parseDate(d.date)>=this.start_end[0] && this.parseDate(d.date) <= this.start_end[1]);
+        
+        //var fltrdData = dat.filter((d) => d.date == this.selected_date);
+        
+        var allHts = [];
+        var htCounter = {};
+        fltrdData.forEach((item) => {
+            allHts = allHts.concat(item.hashtags);
+        });
+
+        // Filtering "" results: Is doing this necessary or truthful?
+        allHts = allHts.filter((d) => d !== "");
+
+        allHts.forEach((ht) => {
+            if (!(ht in htCounter)) {
+                htCounter[ht] = 1
+            } else {
+                htCounter[ht] += 1
+            }
+        });
+
+        var setsAll = Object.keys(htCounter).sort(function(a,b) {
+            return htCounter[b]-htCounter[a]
+        });
+        //var sets = setsAll.slice(0,5);
+        var sets = setsAll.slice(1,6);
+
+        // names = [for ht in sets, array of all tweet ids with ht in ht]
+        var names = [];
+        sets.forEach ((ht) => {
+            var idList = [];
+            fltrdData.forEach((item) => {
+                if (item.hashtags.includes(ht)) {
+                    idList.push(item.id)
+                }
+            });
+            names.push(idList);
+        });
+        makeUpset(sets,names, titleMETOO, colorMETOO, "#venn2");
+        //updateUpset(sets,names, title, color);
+    });
+
+
+  }
+
+
+  updateUpset(maga) {
+    // makeUpset(sets,names);
+    // change date to date range later
+    
+    //var date = '2018-04-04'
+    //var title = this.start_end[0].toString().slice(0,17) + " - " + this.start_end[1].toString().slice(0,17);
+    
+
+    // var filter_date = this.selected_date;
+
+    // if(this.selected_date == -1) filter_date = '2018-04-04';
+    // var title = filter_date;
+
+
+    var title = this.start_end[0].toString().slice(0,15) + " - " + this.start_end[1].toString().slice(0,15);
+    var filename;
+    var color;
+
+
+    //if(maga){
+      var filenameMAGA = 'data/clean_maga_011518_041418.json'
+      var titleMAGA = title + " #MAGA Tweets";
+      var colorMAGA = "red";
+    //}
+    //else{
+      var filenameMETOO = 'data/clean_metoo_011518_041418.json'
+      var titleMETOO = title + " #METOO Tweets";
+      var colorMETOO = "steelblue";
+    //}
+
+    d3.json(filenameMAGA,(d) => {
+        var dat = d;
+            // filter by date first then
+        var fltrdData = dat.filter((d) => this.parseDate(d.date)>=this.start_end[0] && this.parseDate(d.date) <= this.start_end[1]);
+        
+        //var fltrdData = dat.filter((d) => d.date == this.selected_date);
+        
+        var allHts = [];
+        var htCounter = {};
+        fltrdData.forEach((item) => {
+            allHts = allHts.concat(item.hashtags);
+        });
+
+        // Filtering "" results: Is doing this necessary or truthful?
+        allHts = allHts.filter((d) => d !== "");
+
+        allHts.forEach((ht) => {
+            if (!(ht in htCounter)) {
+                htCounter[ht] = 1
+            } else {
+                htCounter[ht] += 1
+            }
+        });
+
+        var setsAll = Object.keys(htCounter).sort(function(a,b) {
+            return htCounter[b]-htCounter[a]
+        });
+        //var sets = setsAll.slice(0,5);
+        var sets = setsAll.slice(1,6);
+
+        // names = [for ht in sets, array of all tweet ids with ht in ht]
+        var names = [];
+        sets.forEach ((ht) => {
+            var idList = [];
+            fltrdData.forEach((item) => {
+                if (item.hashtags.includes(ht)) {
+                    idList.push(item.id)
+                }
+            });
+            names.push(idList);
+        });
+        makeUpset(sets,names, titleMAGA, colorMAGA, "#venn1");
+        //updateUpset(sets,names, title, color);
+    });
+
+    d3.json(filenameMETOO,(d) => {
+        var dat = d;
+            // filter by date first then
+        var fltrdData = dat.filter((d) => this.parseDate(d.date)>=this.start_end[0] && this.parseDate(d.date) <= this.start_end[1]);
+        
+        //var fltrdData = dat.filter((d) => d.date == this.selected_date);
+        
+        var allHts = [];
+        var htCounter = {};
+        fltrdData.forEach((item) => {
+            allHts = allHts.concat(item.hashtags);
+        });
+
+        // Filtering "" results: Is doing this necessary or truthful?
+        allHts = allHts.filter((d) => d !== "");
+
+        allHts.forEach((ht) => {
+            if (!(ht in htCounter)) {
+                htCounter[ht] = 1
+            } else {
+                htCounter[ht] += 1
+            }
+        });
+
+        var setsAll = Object.keys(htCounter).sort(function(a,b) {
+            return htCounter[b]-htCounter[a]
+        });
+        //var sets = setsAll.slice(0,5);
+        var sets = setsAll.slice(1,6);
+
+        // names = [for ht in sets, array of all tweet ids with ht in ht]
+        var names = [];
+        sets.forEach ((ht) => {
+            var idList = [];
+            fltrdData.forEach((item) => {
+                if (item.hashtags.includes(ht)) {
+                    idList.push(item.id)
+                }
+            });
+            names.push(idList);
+        });
+        makeUpset(sets,names, titleMETOO, colorMETOO, "#venn2");
         //updateUpset(sets,names, title, color);
     });
 
@@ -656,12 +826,12 @@ function showTotal() {
 }
 
 function updateUpsetMAGA() {
-  time_plot.drawUpset(true);
+  time_plot.updateUpset(true);
   return;
 }
 
 function updateUpsetMETOO() {
-  time_plot.drawUpset(false);
+  time_plot.updateUpset(false);
   return;
 }
 

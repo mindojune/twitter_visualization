@@ -54,7 +54,8 @@
       }
     }
 
-    function makeUpset(sets, names, title, color) { // names: [[],[]]
+    function makeUpset(sets, names, title, color, choose) { // names: [[],[]]
+      //var choose = "#venn1"
       //number of circles to make
       var numCircles = sets.length
       var numSets = sets.length
@@ -66,14 +67,14 @@
         bottom: 100,
         left: 100
       };
-      var width = 800;
+      var width = 425; // 800
       var height= 500;
       
-      venn = d3.selectAll("#venn").selectAll("svg") ;
+      venn = d3.selectAll(choose).selectAll("svg") ;
       venn.remove();
 
       // make the canvas
-      var svg = d3.selectAll("#venn")
+      var svg = d3.selectAll(choose)
           .append("svg")
               .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
@@ -86,15 +87,19 @@
 
       // graph title
       var graphTitle = svg.append("text")
+        //.transition()
+        //.duration(750)
         .attr("text-anchor", "middle")
         .attr("fill","black")
         .style("font-size", "20px")
         .attr("transform", "translate("+ (width/2) +","+ -20 +")")
+        .attr("class", "title")
         .text(title);
 
          // make a group for the upset circle intersection things
       var upsetCircles = svg.append("g")
       .attr("id", "upsetCircles")
+      .attr("class", "circle")
       .attr("transform", "translate(20," + (height-60) + ")")
       
       
@@ -164,6 +169,7 @@
           .attr("dy", 5 + i * (rad*2.7))
           .attr("text-anchor", "end")
           .attr("fill", "black")
+          .attr("class", "circletext")
           .style("font-size", 13)
           .text(sets[i])
       }
@@ -176,7 +182,8 @@
       // make the bars
       var upsetBars = svg.append("g")
         .attr("id", "upsetBars")
-        
+        .attr("class", "upsetbars")
+
         
         var nums = []
         for (var i = 0; i < data.length; i++) {
@@ -283,7 +290,11 @@
       }
     }
 
-function updateUpset(sets, names, title, color) { // names: [[],[]]
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+function updateUpset(sets, names, title, color, choose) { // names: [[],[]]
+      //var choose = "#venn1"
       //number of circles to make
       var numCircles = sets.length
       var numSets = sets.length
@@ -295,16 +306,17 @@ function updateUpset(sets, names, title, color) { // names: [[],[]]
         bottom: 100,
         left: 100
       };
-      var width = 800;
+      var width = 425 //800;
       var height= 500;
+      
+      venn = d3.selectAll(choose).selectAll("svg") ;
+      venn.remove();
 
-      //var venn = d3.selectAll("#venn").transition();
       // make the canvas
-      var svg = d3.selectAll("#venn")
+      var svg = d3.selectAll(choose)
           .append("svg")
-          .transition()
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.top + margin.bottom)
           .attr("xmlns", "http://www.w3.org/2000/svg")
           .attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
           .append("g")
@@ -314,17 +326,19 @@ function updateUpset(sets, names, title, color) { // names: [[],[]]
 
       // graph title
       var graphTitle = svg.append("text")
-      .duration(750)
+        //.transition()
+        //.duration(750)
         .attr("text-anchor", "middle")
         .attr("fill","black")
         .style("font-size", "20px")
         .attr("transform", "translate("+ (width/2) +","+ -20 +")")
+        .attr("class", "title")
         .text(title);
 
          // make a group for the upset circle intersection things
       var upsetCircles = svg.append("g")
-      .duration(750)
       .attr("id", "upsetCircles")
+      .attr("class", "circle")
       .attr("transform", "translate(20," + (height-60) + ")")
       
       
@@ -390,11 +404,11 @@ function updateUpset(sets, names, title, color) { // names: [[],[]]
       for (var i = 0; i < numSets; i++) {
 
         upsetCircles.append("text")
-        .duration(750)
           .attr("dx", -20)
           .attr("dy", 5 + i * (rad*2.7))
           .attr("text-anchor", "end")
           .attr("fill", "black")
+          .attr("class", "circletext")
           .style("font-size", 13)
           .text(sets[i])
       }
@@ -406,9 +420,9 @@ function updateUpset(sets, names, title, color) { // names: [[],[]]
 
       // make the bars
       var upsetBars = svg.append("g")
-      .duration(750)
         .attr("id", "upsetBars")
-        
+        .attr("class", "upsetbars")
+
         
         var nums = []
         for (var i = 0; i < data.length; i++) {
@@ -442,7 +456,6 @@ function updateUpset(sets, names, title, color) { // names: [[],[]]
 
       //add X axis
       upsetBars.append("g")
-      .duration(750)
           .attr("class", "x axis")
           .attr("transform", "translate(0," +  height + ")")
           .attr("fill", "none")
@@ -455,7 +468,6 @@ function updateUpset(sets, names, title, color) { // names: [[],[]]
 
       // Add the Y Axis
       upsetBars.append("g")
-      .duration(750)
           .attr("class", "y axis")
           .attr("fill", "none")
           .attr("stroke", "black")
@@ -468,13 +480,11 @@ function updateUpset(sets, names, title, color) { // names: [[],[]]
         
 
       var chart = upsetBars.append('g')
-      .duration(750)
               .attr("transform", "translate(1,0)")
               .attr('id','chart');
 
       // adding each bar
       chart.selectAll('.bar')
-      .duration(750)
               .data(data)
               .enter()
               .append('rect')
@@ -490,7 +500,6 @@ function updateUpset(sets, names, title, color) { // names: [[],[]]
       for (var i = 0; i < data.length; i++) {
         for (var j = 0; j < numSets; j++) {
           upsetCircles.append("circle")
-          .duration(750)
             .attr("cx", i * (rad*2.7))
             .attr("cy", j * (rad*2.7))
             .attr("r", rad)
@@ -508,7 +517,6 @@ function updateUpset(sets, names, title, color) { // names: [[],[]]
 
         if (data[i].set.length != 1) {
           upsetCircles.append("line")
-          .duration(750)
             .attr("id",  "setline" + i)
             .attr("x1", i * (rad*2.7))
             .attr("y1", data[i].set.substring(0, 1) * (rad*2.7))
@@ -520,4 +528,3 @@ function updateUpset(sets, names, title, color) { // names: [[],[]]
         }
       }
     }
-
