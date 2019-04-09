@@ -1,6 +1,6 @@
 'use strict';
 
-// TODO 1: Add Transition to Upset Plot
+// TODO 1: Smart Computation of Upset Plot
 
 class Plot {
   constructor(curr_data1, model) {
@@ -154,7 +154,7 @@ class Plot {
     var new_string = "";
 
     for (var i = 0; i < words.length; i++) { 
-      if(words[i].length > 20){
+      if(words[i].length > 30){
         //console.log(words[i].match(/.{1,10}/g));
         var equal_length = words[i].match(/.{1,15}/g);
         for (var j = 0; j < equal_length.length; j++) { 
