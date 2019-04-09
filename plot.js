@@ -42,6 +42,9 @@ class Plot {
     this.createBrush();
     //this.createZoom(); // can be optional
 
+    //this.fillTweets();
+    this.initiateTweets();
+
     this.drawFocus();
     this.drawContext();
 
@@ -61,6 +64,47 @@ class Plot {
 
     // true = MAGA default, false = METOO default
     this.drawUpset(false);
+  }
+
+  fillTweets(magaTweet, metooTweet){
+      var magaUser = magaTweet[0];
+      var metooUser = metooTweet[0];
+      var magaUID = magaTweet[1];
+      var metooUID =metooTweet[1];
+      var magaTime= magaTweet[2];
+      var metooTime = metooTweet[2];
+      var magaText= magaTweet[3];
+      var metooText =metooTweet[3];
+
+      this.maga = d3.select('#tweetMAGA');
+      this.metoo = d3.select('#tweetMETOO');
+
+      //console.log(this.maga)
+      this.maga.select(".tweetEntry-fullname").text(magaUser);
+      this.maga.select(".tweetEntry-username").text(magaUID);
+      this.maga.select(".tweetEntry-timestamp").text(magaTime);
+      this.maga.select(".tweetEntry-text-container").text(magaText);
+
+      this.metoo.select(".tweetEntry-fullname").text(metooUser);
+      this.metoo.select(".tweetEntry-username").text(metooUID);
+      this.metoo.select(".tweetEntry-timestamp").text(metooTime);
+      this.metoo.select(".tweetEntry-text-container").text(metooText);
+  }
+
+  initiateTweets(){
+      this.maga = d3.select('#tweetMAGA');
+      this.metoo = d3.select('#tweetMETOO');
+
+      //console.log(this.maga)
+      this.maga.select(".tweetEntry-fullname").text("Donald J. Trump");
+      this.maga.select(".tweetEntry-username").text("@realDonaldTrump");
+      this.maga.select(".tweetEntry-timestamp").text("8:09 AM - 21 Feb 2019");
+      this.maga.select(".tweetEntry-text-container").text(".@JussieSmollett - what about MAGA and the tens of millions of people you insulted with your racist and dangerous comments!? #MAGA");
+
+      this.metoo.select(".tweetEntry-fullname").text("Alyssa Milano");
+      this.metoo.select(".tweetEntry-username").text("@Alyssa_Milano");
+      this.metoo.select(".tweetEntry-timestamp").text("1:21 PM - 15 Oct 2017");
+      this.metoo.select(".tweetEntry-text-container").text("If you’ve been sexually harassed or assaulted write ‘me too’ as a reply to this tweet.");
   }
 
   drawLegend(){
@@ -167,8 +211,8 @@ class Plot {
             var topTweeterMAGA = res[0][0];
             var topTweeterMETOO = res[1][0];    
 
-            var topTweetMAGA = Plot.textProcess(res[0][1]);
-            var topTweetMETOO = Plot.textProcess(res[1][1]);   
+            var topTweetMAGA = Plot.textProcess(res[0][3]);
+            var topTweetMETOO = Plot.textProcess(res[1][3]);   
 
             var xpos = d3.mouse(this)[0] ;
             var ypos = d3.mouse(this)[1] ;
@@ -182,29 +226,31 @@ class Plot {
                 .attr('y2', height);    
 
 
-            tooltip1.transition()     
-                //.style("visibility", "visible")
-                .duration(200)      
-                .style("opacity", .8);      
-            tooltip1.html("MAGA TOP Tweet")  
-                .text(topTweeterMAGA+": "+topTweetMAGA)
-                .attr("font-family", "noto")
-                .attr("font-size", "10px")
-                .style("left", (d3.event.pageX) + "px")     
-                .style("top", (d3.event.pageY - 28) + "px");    
+            // tooltip1.transition()     
+            //     //.style("visibility", "visible")
+            //     .duration(200)      
+            //     .style("opacity", .8);      
+            // tooltip1.html("MAGA TOP Tweet")  
+            //     .text(topTweeterMAGA+": "+topTweetMAGA)
+            //     .attr("font-family", "noto")
+            //     .attr("font-size", "10px")
+            //     .style("left", (d3.event.pageX) + "px")     
+            //     .style("top", (d3.event.pageY - 28) + "px");    
  
-             tooltip2.transition()     
-                //.style("visibility", "visible")
-                .duration(200)      
-                .style("opacity", .8);      
-            tooltip2.html("METOO TOP Tweet")  
-                .text(topTweeterMETOO+": "+topTweetMETOO)
-                .attr("font-family", "noto")
-                .attr("font-size", "10px")
-                .style("left", (d3.event.pageX + 150) + "px")     
-                .style("top", (d3.event.pageY - 28) + "px");    
+            //  tooltip2.transition()     
+            //     //.style("visibility", "visible")
+            //     .duration(200)      
+            //     .style("opacity", .8);      
+            // tooltip2.html("METOO TOP Tweet")  
+            //     .text(topTweeterMETOO+": "+topTweetMETOO)
+            //     .attr("font-family", "noto")
+            //     .attr("font-size", "10px")
+            //     .style("left", (d3.event.pageX + 150) + "px")     
+            //     .style("top", (d3.event.pageY - 28) + "px");    
                                    
-
+            var magaTweet = [topTweeterMAGA, topTweeterMAGA, res[0][2], topTweetMAGA];
+            var metooTweet = [topTweeterMETOO, topTweeterMETOO, res[1][2], topTweetMETOO];
+            $this.fillTweets(magaTweet, metooTweet);
             //console.log("METOO TOP TWEET", topTweetMETOO, "by", topTweeterMETOO);
             //console.log("MAGA TOP TWEET", topTweetMAGA, "by", topTweeterMAGA);
 
@@ -389,7 +435,7 @@ class Plot {
   getTopTweet(date){
     // console.log(this.displaying);
     // console.log(date);
-    var content1, content2, tweeter1, tweeter2;
+    var content1, content2, tweeter1, tweeter2, time1, time2, id1, id2;
     var res;
     var MAGA, METOO;
     if (this.displaying == "replies"){
@@ -410,11 +456,19 @@ class Plot {
     }
     MAGA = res[0];
     METOO = res[1];
+
     content1 = MAGA[0].content;
     tweeter1 = MAGA[0].tweeter;
+    time1 = MAGA[0].date;
+    id1 = MAGA[0].tweeter;
+
+
     content2 = METOO[0].content;
     tweeter2 = METOO[0].tweeter;
-    return [[tweeter1, content1], [tweeter2, content2] ];
+    time2 = METOO[0].date;
+    id2 = METOO[0].tweeter;
+
+    return [[tweeter1, id1, time1, content1], [tweeter2, id2, time2, content2] ];
   }
 
   drawUpset(maga) {
@@ -747,7 +801,7 @@ class Plot {
 ///////////////////////////////////////////////
 // data loading and drawing <=> "main()" part of the function
 var time_plot;
-const model = new Model('data/clean_maga_011518_041418.json', 'data/clean_metoo_011518_041418.json');
+var model = new Model('data/clean_maga_011518_041418.json', 'data/clean_metoo_011518_041418.json');
 model.loadData()
   .then(([data1, data2]) => {
     model.data1 = data1;
@@ -773,6 +827,8 @@ d3.select('#show-likes').on('click', showLikes);
 d3.select('#show-ratio').on('click', showAggregateRatio);
 d3.select('#show-total').on('click', showTotal);
 d3.select('#show-hb').on('click', updateUpsetMAGA);
+d3.select('#align').on('click', align);
+d3.select('#dealign').on('click', dealign);
 // d3.select('#show-hbMETOO').on('click', updateUpsetMETOO);
 
 function showReplies() {
@@ -832,6 +888,49 @@ function updateUpsetMAGA() {
 
 function updateUpsetMETOO() {
   time_plot.updateUpset(false);
+  return;
+}
+
+
+function align() {
+  //time_plot.updateUpset(false);
+  model = new Model('data/maga_dayofyear_061515_121515.json', 'data/metoo_dayofyear_101417_041418.json');
+  model.loadData()
+    .then(([data1, data2]) => {
+      model.data1 = data1;
+      model.data2 = data2;
+
+      // Default View
+      var repliesByDate = model.getRepliesByDate();
+      var curr_data1 = repliesByDate;
+
+      time_plot.update(curr_data1);
+      time_plot.displaying = "replies";
+      // time_plot = new Plot(curr_data1, model);
+      // time_plot.draw();
+  });
+  return;
+}
+
+
+
+function dealign() {
+  //time_plot.updateUpset(false);
+  model = new Model('data/clean_maga_011518_041418.json', 'data/clean_metoo_011518_041418.json');
+  model.loadData()
+    .then(([data1, data2]) => {
+      model.data1 = data1;
+      model.data2 = data2;
+
+      // Default View
+      var repliesByDate = model.getRepliesByDate();
+      var curr_data1 = repliesByDate;
+
+      time_plot.update(curr_data1);
+      time_plot.displaying = "replies";
+      //time_plot = new Plot(curr_data1, model);
+      //time_plot.draw();
+  });
   return;
 }
 

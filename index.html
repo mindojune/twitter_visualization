@@ -33,12 +33,64 @@
          <p>Is there an interaction between the two sides of the spectrum in the content of the tweets?</p>
       </div>
       <div >
-        <table style="width:100%;margin-left: 00%;">
+        <table style="width:60%;margin-left: 15%;">
           <tr>
-            <td><blockquote class="twitter-tweet" data-lang="en" id="tweet1"><p lang="en" dir="ltr">“What’s completely unacceptable is for Congesswoman Omar to target Jews, in this case Stephen Miller.” Jeff Ballabon, B2 Strategic, CEO.  <a href="https://twitter.com/Varneyco?ref_src=twsrc%5Etfw">@Varneyco</a></p>&mdash; Donald J. Trump (@realDonaldTrump) <a href="https://twitter.com/realDonaldTrump/status/1115639577102962691?ref_src=twsrc%5Etfw">April 9, 2019</a></blockquote>
-          <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></td>
-            <td><blockquote class="twitter-tweet" data-cards="hidden" data-lang="en" id="tweet2"><p lang="en" dir="ltr">Introducing our new podcast, &quot;Hear the Bern,&quot; hosted by <a href="https://twitter.com/briebriejoy?ref_src=twsrc%5Etfw">@briebriejoy</a>! Hear all about the people, stories and ideas that are driving this political revolution. Episode 1 is live on Spotify, Google Play and iTunes. Tune in! <a href="https://twitter.com/hashtag/HeartheBern?src=hash&amp;ref_src=twsrc%5Etfw">#HeartheBern</a> <a href="https://t.co/ou7fy5Q7sE">https://t.co/ou7fy5Q7sE</a></p>&mdash; Bernie Sanders (@BernieSanders) <a href="https://twitter.com/BernieSanders/status/1115616810412519425?ref_src=twsrc%5Etfw">April 9, 2019</a></blockquote>
-          <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></td>
+            <td>
+              <h3 style="color:red">#MAGA</h3>
+              <div class="tweetEntry" id="tweetMAGA">
+                  <div class="tweetEntry-content">
+                    <a class="tweetEntry-account-group" href="[accountURL]">
+                      <img class="tweetEntry-avatar" src="anon.png">
+                      <strong class="tweetEntry-fullname">
+                      [fullname]
+                      </strong>
+                      <span class="tweetEntry-username">
+                        @<b>[username]</b>
+                      </span>
+                      <span class="tweetEntry-timestamp">- [timestamp]</span>
+                    </a>
+                    <div class="tweetEntry-text-container">
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quam ipsum, finibus ac est sed, vestibulum condimentum neque. Sed eget iaculis.
+                    </div>
+                  </div>
+                  <div class="optionalMedia" style="display:none;">
+                    <!-- <img class="optionalMedia-img" src="https://i.imgur.com/kOhhPAk.jpg"> -->
+                  </div>
+                  <div class="tweetEntry-action-list" style="line-height:24px;color: #b1bbc3;">
+                    <i class="fa fa-reply" style="width: 80px;"></i>
+                    <i class="fa fa-retweet" style="width: 80px"></i>
+                    <i class="fa fa-heart" style="width: 80px"></i>
+                  </div>
+            </div>
+            </td>
+            <td>
+            <h3 style="color:steelBlue">#METOO</h3>
+            <div class="tweetEntry" id="tweetMETOO">
+                  <div class="tweetEntry-content">
+                    <a class="tweetEntry-account-group" href="[accountURL]">
+                      <img class="tweetEntry-avatar" src="anon.png">
+                      <strong class="tweetEntry-fullname">
+                      [fullname]
+                      </strong>
+                      <span class="tweetEntry-username">
+                        @<b>[username]</b>
+                      </span>
+                      <span class="tweetEntry-timestamp">- [timestamp]</span>
+                    </a>
+                    <div class="tweetEntry-text-container">
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quam ipsum, finibus ac est sed, vestibulum condimentum neque. Sed eget iaculis.
+                    </div>
+                  </div>
+                  <div class="optionalMedia" style="display:none;">
+                    <!-- <img class="optionalMedia-img" src="https://i.imgur.com/kOhhPAk.jpg"> -->
+                  </div>
+                  <div class="tweetEntry-action-list" style="line-height:24px;color: #b1bbc3;">
+                    <i class="fa fa-reply" style="width: 80px;"></i>
+                    <i class="fa fa-retweet" style="width: 80px"></i>
+                    <i class="fa fa-heart" style="width: 80px"></i>
+                  </div>
+            </div>
+        </td>
           </tr>
         </table>
       </div>
@@ -57,8 +109,13 @@
         <!-- <div id='tooltip' style='position:absolute;background-color:lightgray;padding:5px'></div> -->
       </div>
       <!-- For Upset Plots -->
+       <div class="controls btn-group" role="group" aria-label="View by">
+            <button id="align" type="button" class="btn btn-light">Align By Start Date</button>
+            <button id="dealign" type="button" class="btn btn-light">Dealign</button>
+            <!-- <button id="show-hbMETOO" type="button" class="btn btn-light">See #METOO Tweets Breakdown</button> -->
+      </div>
       <div class="controls btn-group" role="group" aria-label="View by">
-            <button id="show-hb" type="button" class="btn btn-light">Update Hashtag Breakdown</button>
+            <button id="show-hb" type="button" class="btn btn-light">See Hashtag Breakdown</button>
             <!-- <button id="show-hbMETOO" type="button" class="btn btn-light">See #METOO Tweets Breakdown</button> -->
       </div>
       <div >
