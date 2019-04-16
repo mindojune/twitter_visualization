@@ -8,9 +8,14 @@ class Model {
     this.dataSource_METOO = dataSource_METOO;
     this.data1 = [];
     this.data2 = [];
+
+    this.aligned = false;
   }
 
   loadData() {
+    this.data1 = [];
+    this.data2 = [];
+
     return new Promise((resolve, reject) => {
       d3.json(this.dataSource_MAGA, (error1, data1) => {
         if (error1) {
@@ -49,6 +54,7 @@ class Model {
   // }
 
   getDateTweet(date, dataset){
+    //console.log(dataset);
     var tweetsByDate = d3.nest()
       .key(function(d) { return d.date; })
       .entries(dataset);
@@ -56,6 +62,8 @@ class Model {
     var tweetsByDate = tweetsByDate.filter(function(METOO){
           return METOO.key == date;
     });
+
+
     return tweetsByDate;
   }
 
@@ -146,11 +154,18 @@ class Model {
       .key(function(d) { return d.date; })
       .entries(this.data2);  
 
+    var $this = this;
     tweetsByDate.forEach(function(d) {
       var result = tweetsByDate_METOO.filter(function(METOO){
           return d.key == METOO.key;
       });
-       d.date = parseDate(d.key);
+       if($this.aligned){
+        d.date = (d.key);
+       }
+       else{
+        d.date = parseDate(d.key);
+       }
+       
        d.value1 = d.value;
        d.value2 = (result[0] !== undefined) ? result[0].value : null;
        delete d.value;
@@ -171,11 +186,17 @@ class Model {
       .rollup(function(v) { return d3.sum(v, function(d) { return d.likes; }); })
       .entries(this.data2);    
 
+    var $this = this;
     likesByDate.forEach(function(d) {
           var result = likesByDate_METOO.filter(function(METOO){
           return d.key == METOO.key;
       });
-     d.date = parseDate(d.key);
+       if($this.aligned){
+        d.date = (d.key);
+       }
+       else{
+        d.date = parseDate(d.key);
+       }
      d.value1 = d.value;
      d.value2 = (result[0] !== undefined) ? result[0].value : null;
     });
@@ -194,11 +215,17 @@ class Model {
       .rollup(function(v) { return d3.sum(v, function(d) { return d.retweets; }); })
       .entries(this.data2);    
 
+    var $this = this;
     retweetsByDate.forEach(function(d) {
           var result = retweetsByDate_METOO.filter(function(METOO){
           return d.key == METOO.key;          
       });
-     d.date = parseDate(d.key);
+       if($this.aligned){
+        d.date = (d.key);
+       }
+       else{
+        d.date = parseDate(d.key);
+       }
      d.value1 = d.value;
      d.value2 = (result[0] !== undefined) ? result[0].value : null;
     });
@@ -218,14 +245,22 @@ class Model {
       .rollup(function(v) { return d3.sum(v, function(d) { return d.replies; }); })
       .entries(this.data2);    
 
+    var $this = this;
     repliesByDate.forEach(function(d) {
           var result = repliesByDate_METOO.filter(function(METOO){
           return d.key == METOO.key;
       });
-     d.date = parseDate(d.key);
+       if($this.aligned){
+        d.date = (d.key);
+       }
+       else{
+        d.date = parseDate(d.key);
+       }
      d.value1 = d.value;
      d.value2 = (result[0] !== undefined) ? result[0].value : null;
     });
+
+    //console.log(repliesByDate);
     return repliesByDate;     
   }
 
@@ -251,11 +286,17 @@ class Model {
                           })
       .entries(this.data2);
 
+    var $this = this;
     averageratioByDate.forEach(function(d) {
           var result = averageratioByDate_METOO.filter(function(METOO){
           return d.key == METOO.key;
       });
-     d.date = parseDate(d.key);
+       if($this.aligned){
+        d.date = (d.key);
+       }
+       else{
+        d.date = parseDate(d.key);
+       }
      d.value1 = d.value;
      d.value2 = (result[0] !== undefined) ? result[0].value : null;
     }); 
@@ -286,11 +327,17 @@ class Model {
             })
       .entries(this.data2);
 
+    var $this = this;
     aggregateratioByDate.forEach(function(d) {
           var result = aggregateratioByDate_METOO.filter(function(METOO){
           return d.key == METOO.key;
       });
-     d.date = parseDate(d.key);
+       if($this.aligned){
+        d.date = (d.key);
+       }
+       else{
+        d.date = parseDate(d.key);
+       }
      d.value1 = d.value;
      d.value2 = (result[0] !== undefined) ? result[0].value : null;
     }); 
@@ -309,12 +356,17 @@ class Model {
       .rollup(function(v) { return d3.sum(v, function(d) { return d.replies + d.retweets + d.likes; }); })
       .entries(this.data2);
 
-
+    var $this = this;
     totalByDate.forEach(function(d) {
           var result = totalByDate_METOO.filter(function(METOO){
           return d.key == METOO.key;
       });
-     d.date = parseDate(d.key);
+       if($this.aligned){
+        d.date = (d.key);
+       }
+       else{
+        d.date = parseDate(d.key);
+       }
      d.value1 = d.value;
      d.value2 = (result[0] !== undefined) ? result[0].value : null;
     });

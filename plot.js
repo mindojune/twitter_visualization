@@ -34,6 +34,8 @@ class Plot {
       // "retweets", "likes", "total", "ratio"
 
       //this.upsetMAGA = true;
+
+      this.aligned = false;
   } 
 
   draw() {
@@ -116,8 +118,15 @@ class Plot {
 
 
   createXScaleAxis() {
-      this.x1 = d3.scaleTime().range([0, this.width]);
-      this.x2 = d3.scaleTime().range([0, this.width]);
+      if(this.aligned){
+        this.x1 = d3.scaleLinear().range([0, this.width]);
+        this.x2 = d3.scaleLinear().range([0, this.width]);        
+      }
+      else{
+        this.x1 = d3.scaleTime().range([0, this.width]);
+        this.x2 = d3.scaleTime().range([0, this.width]);       
+      }
+
       this.xAxis1 = d3.axisBottom(this.x1);
       this.xAxis2 = d3.axisBottom(this.x2);
       this.x1.domain(d3.extent(this.curr_data1, function(d) { return d.date; }));  
@@ -203,7 +212,14 @@ class Plot {
             var xm = x1.invert(d3.mouse(this)[0]); // THIS IS CORRECT
             var ym = y1.invert(d3.mouse(this)[1]); // THIS IS CORRECT
 
-            const date = d3.timeFormat("%Y-%m-%d")(xm);
+            var date;
+            if($this.aligned){
+              date = Math.round(xm);
+            } 
+            else{
+              date = d3.timeFormat("%Y-%m-%d")(xm);
+            }
+            //console.log(date);
             
             $this.selected_date = date;
             var res = $this.getTopTweet(date);
@@ -217,42 +233,17 @@ class Plot {
             var xpos = d3.mouse(this)[0] ;
             var ypos = d3.mouse(this)[1] ;
             
-
             tooltipLine.attr('stroke', 'black')
                 .attr("stroke-width", 2.5)
                 .attr("x1", xpos)
                 .attr("x2", xpos)
                 .attr('y1', 0)
                 .attr('y2', height);    
-
-
-            // tooltip1.transition()     
-            //     //.style("visibility", "visible")
-            //     .duration(200)      
-            //     .style("opacity", .8);      
-            // tooltip1.html("MAGA TOP Tweet")  
-            //     .text(topTweeterMAGA+": "+topTweetMAGA)
-            //     .attr("font-family", "noto")
-            //     .attr("font-size", "10px")
-            //     .style("left", (d3.event.pageX) + "px")     
-            //     .style("top", (d3.event.pageY - 28) + "px");    
- 
-            //  tooltip2.transition()     
-            //     //.style("visibility", "visible")
-            //     .duration(200)      
-            //     .style("opacity", .8);      
-            // tooltip2.html("METOO TOP Tweet")  
-            //     .text(topTweeterMETOO+": "+topTweetMETOO)
-            //     .attr("font-family", "noto")
-            //     .attr("font-size", "10px")
-            //     .style("left", (d3.event.pageX + 150) + "px")     
-            //     .style("top", (d3.event.pageY - 28) + "px");    
-                                   
+              
             var magaTweet = [topTweeterMAGA, topTweeterMAGA, res[0][2], topTweetMAGA];
             var metooTweet = [topTweeterMETOO, topTweeterMETOO, res[1][2], topTweetMETOO];
             $this.fillTweets(magaTweet, metooTweet);
-            //console.log("METOO TOP TWEET", topTweetMETOO, "by", topTweeterMETOO);
-            //console.log("MAGA TOP TWEET", topTweetMAGA, "by", topTweeterMAGA);
+
 
 
     }
@@ -461,7 +452,6 @@ class Plot {
     tweeter1 = MAGA[0].tweeter;
     time1 = MAGA[0].date;
     id1 = MAGA[0].tweeter;
-
 
     content2 = METOO[0].content;
     tweeter2 = METOO[0].tweeter;
@@ -901,23 +891,58 @@ function updateUpsetMETOO() {
   return;
 }
 
+function preprocess(data){
+  var arr = [];
+
+  // console.log(data);
+  //console.log(Object.values(data.content).length);
+
+  for (var i = 0; i <  Object.values(data.content).length; i++) {
+    var dict = {}
+    dict["content"] = Object.values(data.content)[i];
+    dict["absdate"] =  Object.values(data.date)[i];
+    dict["date"] =   Object.values(data.dayofyear)[i];
+    dict["hashtags"] =  Object.values(data.hashtags)[i];
+    dict["id"] =  Object.values(data.id)[i];
+    dict["likes"] =  Object.values(data.likes)[i];
+    dict["replies"] =  Object.values(data.replies)[i];;
+    dict["retweets"] =  Object.values(data.retweets)[i];
+    dict["tweeter"] =  Object.values(data.tweeter)[i];
+    //console.log(data.tweeter[i]);
+    arr.push(dict);
+  }
+
+  //console.log(data.content[12]);
+  //console.log(arr);
+  return arr;
+}
 
 function align() {
   //time_plot.updateUpset(false);
-  model = new Model('data/maga_dayofyear_061515_121515.json', 'data/metoo_dayofyear_101417_041418.json');
+  //console.log(model.data1);
+  model = new Model('data/maga_align_061515_121515.json', 'data/metoo_align_101417_041418.json');
+  
   model.loadData()
     .then(([data1, data2]) => {
+
       model.data1 = data1;
       model.data2 = data2;
+      model.aligned = true;
+      //console.log(model.data1);
 
       // Default View
       var repliesByDate = model.getRepliesByDate();
       var curr_data1 = repliesByDate;
-
+      
+      time_plot.aligned = true;
+      time_plot.model = model;
       time_plot.update(curr_data1);
       time_plot.displaying = "replies";
-      // time_plot = new Plot(curr_data1, model);
-      // time_plot.draw();
+
+      //time_plot = new Plot(curr_data1, model);
+      //time_plot.draw();
+
+      
   });
   return;
 }
@@ -931,11 +956,14 @@ function dealign() {
     .then(([data1, data2]) => {
       model.data1 = data1;
       model.data2 = data2;
+      model.aligned = false;
 
       // Default View
       var repliesByDate = model.getRepliesByDate();
       var curr_data1 = repliesByDate;
 
+      time_plot.aligned = false;
+      time_plot.model = model;
       time_plot.update(curr_data1);
       time_plot.displaying = "replies";
       //time_plot = new Plot(curr_data1, model);
