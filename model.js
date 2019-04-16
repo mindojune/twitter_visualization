@@ -135,9 +135,6 @@ class Model {
     return [MAGAsorted, METOOsorted];
   }
 
-
-
-
   // TODO: Rightnow METOO date is clipped to MAGA's?
 
   getTweetsByDate(){

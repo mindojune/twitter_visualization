@@ -63,7 +63,7 @@ class Plot {
                       // my current tooltip implementation to work: reason = right now zoom blocks clickevents
 
     // true = MAGA default, false = METOO default
-    this.drawUpset(false);
+    //this.drawUpset(false);
   }
 
   fillTweets(magaTweet, metooTweet){
