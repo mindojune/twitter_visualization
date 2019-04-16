@@ -494,12 +494,12 @@ class Plot {
 
 
     //if(maga){
-      var filenameMAGA = 'data/clean_maga_011518_041418.json'
+      var filenameMAGA = 'data/clean_maga_oct17_apr18.json'
       var titleMAGA = title + " #MAGA Tweets";
       var colorMAGA = "red";
     //}
     //else{
-      var filenameMETOO = 'data/clean_metoo_011518_041418.json'
+      var filenameMETOO = 'data/clean_metoo_oct17_apr18.json'
       var titleMETOO = title + " #METOO Tweets";
       var colorMETOO = "steelblue";
     //}
@@ -624,12 +624,12 @@ class Plot {
 
 
     //if(maga){
-      var filenameMAGA = 'data/clean_maga_011518_041418.json'
+      var filenameMAGA = 'data/clean_maga_oct17_apr18.json'
       var titleMAGA = title + " #MAGA Tweets";
       var colorMAGA = "red";
     //}
     //else{
-      var filenameMETOO = 'data/clean_metoo_011518_041418.json'
+      var filenameMETOO = 'data/clean_metoo_oct17_apr18.json'
       var titleMETOO = title + " #METOO Tweets";
       var colorMETOO = "steelblue";
     //}
@@ -811,7 +811,7 @@ class Plot {
 ///////////////////////////////////////////////
 // data loading and drawing <=> "main()" part of the function
 var time_plot;
-var model = new Model('data/clean_maga_011518_041418.json', 'data/clean_metoo_011518_041418.json');
+var model = new Model('data/clean_maga_oct17_apr18.json', 'data/clean_metoo_oct17_apr18.json');
 model.loadData()
   .then(([data1, data2]) => {
     model.data1 = data1;
@@ -926,7 +926,7 @@ function align() {
 
 function dealign() {
   //time_plot.updateUpset(false);
-  model = new Model('data/clean_maga_011518_041418.json', 'data/clean_metoo_011518_041418.json');
+  model = new Model('data/clean_maga_oct17_apr18.json', 'data/clean_metoo_oct17_apr18.json');
   model.loadData()
     .then(([data1, data2]) => {
       model.data1 = data1;
