@@ -458,6 +458,20 @@ class Plot {
     time2 = METOO[0].date;
     id2 = METOO[0].tweeter;
 
+    if(this.aligned){
+      //061515 
+      //time1 = this.parseDate("2016-05-15") + time1;
+      time1 = d3.timeDay.offset(this.parseDate("2016-05-15"), time1)
+      time1 = d3.timeFormat("%Y-%m-%d")(time1);
+      //time1 = MAGA[0].absdate;
+      // 101417
+      //time2 = this.parseDate("2017-10-14") + time2;
+      time2 = d3.timeDay.offset(this.parseDate("2017-10-14"), time2)
+      time2 = d3.timeFormat("%Y-%m-%d")(time2);
+      //time2 = METOO[0].absdate;
+
+    }
+
     return [[tweeter1, id1, time1, content1], [tweeter2, id2, time2, content2] ];
   }
 
