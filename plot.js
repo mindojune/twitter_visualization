@@ -83,12 +83,12 @@ class Plot {
 
       //console.log(this.maga)
       this.maga.select(".tweetEntry-fullname").text(magaUser);
-      this.maga.select(".tweetEntry-username").text(magaUID);
+      this.maga.select(".tweetEntry-username").text("@"+magaUID);
       this.maga.select(".tweetEntry-timestamp").text(magaTime);
       this.maga.select(".tweetEntry-text-container").text(magaText);
 
       this.metoo.select(".tweetEntry-fullname").text(metooUser);
-      this.metoo.select(".tweetEntry-username").text(metooUID);
+      this.metoo.select(".tweetEntry-username").text("@"+metooUID);
       this.metoo.select(".tweetEntry-timestamp").text(metooTime);
       this.metoo.select(".tweetEntry-text-container").text(metooText);
   }
