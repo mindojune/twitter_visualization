@@ -935,6 +935,7 @@ function align() {
   //time_plot.updateUpset(false);
   //console.log(model.data1);
   model = new Model('data/maga_align_061515_121515.json', 'data/metoo_align_101417_041418.json');
+  //model = new Model('data/maga_align_061515_121515.json', 'data/metoo_align_101417_041418.json');
   
   model.loadData()
     .then(([data1, data2]) => {

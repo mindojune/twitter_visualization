@@ -1,6 +1,8 @@
 html {
   min-height: 100vh;
+  text-align: center;
 }
+
 body {
   min-height: 100vh;
   width: 1200px;
@@ -19,7 +21,7 @@ h1 {
 
 
 .time_series1 {
-  text-align: center;
+  text-align: justify;
   color: black;
   position:absolute;
   margin: 0 auto;
